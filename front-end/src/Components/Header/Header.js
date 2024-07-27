@@ -4,10 +4,9 @@ import { Link } from "react-router-dom";
 
 const Header = () => {
   return (
-    <nav className="navbar navbar-dark bg-dark">
+    <nav className="navbar navbar-dark bg-dark shadow">
       <div className="container d-flex justify-content-between">
         <Link to="/" className="navbar-brand d-flex align-items-center gap-2 ">
-          {/* Logo made with the help of https://www.design.com/ */}
           <i class="fa-solid fa-ship fa-beat icon"></i>
           <p className="company-name mt-3">CargoPortConnect</p>
         </Link>
