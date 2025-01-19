@@ -1,26 +1,25 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-//https://www.npmjs.com/package/react-sweetalert2
+import { API_URL } from "../../Configuration";
+import axios from "axios";
 
-// reference :https://getbootstrap.com/docs/4.0/components/forms/
-
-const Register = () => {
+const LogIn = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  //??https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
+
   const validateEmail = (email) => {
     return String(email)
       .toLowerCase()
@@ -30,24 +29,24 @@ const Register = () => {
   };
 
   const isValidForm = () => {
-    const { name, email, phone, password, confirmPassword } = formData;
+    const { name, email, password, confirmPassword } = formData;
+    const newErrors = {};
 
-    return (
-      name !== "" &&
-      validateEmail(email) &&
-      phone.length >= 7 &&
-      phone.length <= 15 && //https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s03.html#:~:text=Thanks%20to%20the%20international%20phone,in%20use%20contain%20seven%20digits.
-      phone.match(/^\+[0-9]{1,3}[\s-]?([0-9]{4,14})(?:x[0-9]+)?$/) &&
-      password.length >= 8 &&
-      password === confirmPassword
-    );
+    if (!name) newErrors.name = "Name is required";
+    if (!validateEmail(email)) newErrors.email = "Invalid email format";
+    if (password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
+    if (password !== confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const clearForm = () => {
     setFormData({
       name: "",
       email: "",
-      phone: "",
       password: "",
       confirmPassword: "",
     });
@@ -63,39 +62,49 @@ const Register = () => {
         text: "Please fill in the form correctly!",
         allowOutsideClick: false,
       });
-    } else {
-      navigate("/confirmation"); //2FA
-      /*Swal.fire({
-        title: "Registration Successful!",
-        text: "Welcome, " + formData.name + "!",
-        icon: "success",
-        confirmButtonText: "OK",
-      });*/
+      return;
     }
 
-    clearForm();
+    try {
+      const response = await axios.post(`${API_URL}/api/users/register`, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.status === 201) {
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Registration successful!",
+          timer: 1500,
+        });
+        clearForm();
+        navigate("/confirmation");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Failed!",
+          text: response.data.message || "An unknown error occurred",
+          allowOutsideClick: false,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error!",
+        text:
+          error.response?.data?.message ||
+          "An error occurred during registration.",
+        allowOutsideClick: false,
+      });
+    }
   };
 
-  /*const checkifValid = () => {
-    if (!isValidForm) {
-      Swal({
-        icon: "error",
-        title: "Oops...",
-        text: "Please fill in the form correctly!",
-      });
-    } else {
-      Swal({
-        icon: "error",
-        title: "Oops...",
-        text: "Welcome",
-      });
-    }
-  };*/
-
   return (
-    <div className="container mt-5">
+    <div className="container my-5">
       <div className="row justify-content-center">
-        <div className="col-md-6">
+        <div className="col-md-6 bg-light p-4 rounded-4">
           <h2 className="text-center mb-4">Register</h2>
           <h5 className="text-left mb-4">
             Fields marked with * are{" "}
@@ -119,7 +128,6 @@ const Register = () => {
                 <div className="invalid-feedback">{errors.name}</div>
               )}
             </div>
-
             <div className="form-group mb-3">
               <label htmlFor="email" className="fw-bold">
                 Email*
@@ -137,66 +145,78 @@ const Register = () => {
                 <div className="invalid-feedback">{errors.email}</div>
               )}
             </div>
-
-            <div className="form-group mb-3">
-              <label htmlFor="phone" className="fw-bold">
-                Phone Number*
-              </label>
-              <input
-                type="tel"
-                className={`form-control ${errors.phone ? "is-invalid" : ""}`}
-                id="phone"
-                name="phone"
-                placeholder="+3867018202"
-                value={formData.phone}
-                onChange={handleChange}
-              />
-              {errors.phone && (
-                <div className="invalid-feedback">{errors.phone}</div>
-              )}
-            </div>
-
             <div className="form-group mb-3">
               <label htmlFor="password" className="fw-bold">
                 Password*
               </label>
-              <input
-                type="password"
-                className={`form-control ${
-                  errors.password ? "is-invalid" : ""
-                }`}
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-              />
+              <div className="input-group">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className={`form-control ${
+                    errors.password ? "is-invalid" : ""
+                  }`}
+                  id="password"
+                  name="password"
+                  placeholder="At least 8 characters"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <div className="input-group-append">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary mx-2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+              </div>
               {errors.password && (
                 <div className="invalid-feedback">{errors.password}</div>
               )}
             </div>
-
             <div className="form-group mb-4">
               <label htmlFor="confirmPassword" className="fw-bold">
                 Password Confirmation*
               </label>
-              <input
-                type="password"
-                className={`form-control ${
-                  errors.confirmPassword ? "is-invalid" : ""
-                }`}
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
+              <div className="input-group">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className={`form-control ${
+                    errors.confirmPassword ? "is-invalid" : ""
+                  }`}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="At least 8 characters"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+                <div className="input-group-append">
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary mx-2"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+              </div>
               {errors.confirmPassword && (
                 <div className="invalid-feedback">{errors.confirmPassword}</div>
               )}
             </div>
-
-            <button type="submit" className="btn btn-primary btn-block">
-              Create Profile
-            </button>
+            <div>
+              <button type="submit" className="btn btn-primary btn-block">
+                Create Profile
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary btn-block mx-2"
+                onClick={() => navigate("/signin")}
+              >
+                Already Have One?
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -204,4 +224,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default LogIn;

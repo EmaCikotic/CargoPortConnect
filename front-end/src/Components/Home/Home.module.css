@@ -9,39 +9,18 @@
   border-radius: 5px;
 }
 
-/* fade in animation */
-.fadeIn {
-  opacity: 0;
-  animation: fadeIn 8s forwards;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.fadeInDelayed {
-  opacity: 0;
-  animation: fadeIn 5s forwards;
-  animation-delay: 0.5s;
-}
-
 .teamImage {
-  width: 150px; /* Adjust size as needed */
+  width: 150px;
   height: 150px;
   object-fit: cover;
 }
 
 .card {
-  transition: transform 0.2s; /* Smooth transition */
+  transition: transform 0.2s;
 }
 
 .card:hover {
-  transform: translateY(-5px); /* Lift effect */
+  transform: translateY(-5px);
 }
 
 .list-group-item:hover {
@@ -51,5 +30,43 @@
     255,
     0.1
   ); /* Lighten the background on hover */
-  cursor: pointer; /* Pointer cursor for better UX */
+  cursor: pointer;
+}
+
+/* Welcome Section CSS */
+.welcomeContainer {
+  position: relative;
+  height: 100vh;
+}
+
+.slideInContent {
+  animation: slideInLeft 0.6s ease-out forwards;
+}
+
+.slideInContentright {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+/* Left Slide In Animation */
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Right Slide In Animation */
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }

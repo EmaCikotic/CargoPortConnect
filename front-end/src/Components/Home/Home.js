@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./Home.module.css";
-import background from "./background.jpg";
+import background from "./background.jpg"; // your image
 import CEO from "./CEO.jpg";
 import CTO from "./CTO.jpg";
 import COO from "./COO.jpg";
 import marketing from "./marketing.jpg";
 import HR from "./HR.jpg";
 import finance from "./finance.jpg";
-import socialMedia from "./socialmedia.jpg"; //
+import socialMedia from "./socialmedia.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -20,20 +20,27 @@ const Home = () => {
   }, []);
 
   return (
-    <div className={`container-fluid ${styles.homePage}`}>
-      <div className="row justify-content-center min-vh-100">
+    <div className="container-fluid mb-3">
+      {/* Welcome Section with Background Image */}
+      <div
+        className={`row justify-content-center ${styles.welcomeContainer}`}
+        style={{
+          backgroundImage: `url(${background})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          minHeight: "100vh",
+        }}
+      >
         <div
-          className={` mb-4 ${
-            showContent ? styles.fadeIn : ""
-          } col-md-6 d-flex flex-column justify-content-center `}
+          className={`col-md-6 d-flex flex-column justify-content-center ${styles.slideInContent}`}
         >
-          <h1 className={`display-4 font-weight-bold text-center fw-bold`}>
-            Welcome
+          <h1 className="display-4 font-weight-bold text-center fw-bold">
+            CargoPortConnect
           </h1>
-          <p className={`lead mb-4 text-center`}>
+          <p className={`lead mb-4 text-center ${styles.slideInContentright}`}>
             <strong>Streamlining Shipping, Empowering Efficiency.</strong>
           </p>
-          <p className={`text-muted mb-4 `}>
+          <p className="text-muted mb-4">
             At CargoPortConnect, we are committed to revolutionizing container
             management and enhancing operational efficiency for the global
             shipping and logistics industry.
@@ -41,7 +48,7 @@ const Home = () => {
           <div className="d-flex gap-3 justify-content-center">
             <a
               href="/aboutus"
-              className={`btn btn-primary p-2 justify-content-center`}
+              className="btn btn-primary p-2 justify-content-center"
             >
               Learn More
             </a>
@@ -54,11 +61,11 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <hr></hr>
 
-      {/* Values Section 
-      https://www.achievers.com/blog/company-core-value-examples/*/}
-      <div className="row m-3  ">
+      <hr />
+
+      {/* Values Section */}
+      <div className="row m-3">
         <div className="col-12 text-center">
           <h2 className="display-5 mb-4 fw-bold">Our Values</h2>
         </div>
@@ -71,7 +78,7 @@ const Home = () => {
           </div>
           <div className="col-md-4 text-center">
             <h3 className="text-danger fw-bold">Innovation</h3>
-            <p className="text-muted ">
+            <p className="text-muted">
               We innovate to provide better solutions for our clients.
             </p>
           </div>
@@ -83,11 +90,8 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <hr></hr>
+      <hr />
 
-      {/**review section  reference https://www.trustpilot.com/review/airfreight.com
-       * https://getbootstrap.com/docs/4.0/components/card/
-       */}
       {/* Client Reviews Section */}
       <div className="row mt-5 d-flex justify-content-center">
         <div className="col-12 text-center">
@@ -100,7 +104,6 @@ const Home = () => {
               <h6 className="card-subtitle mb-2 text-muted">
                 CEO, ExampleCorp
               </h6>
-
               <p className="card-text">
                 "Excellent communication, easy payment process, prompt updates
                 through the delivery process. I will not think twice about using
@@ -110,7 +113,7 @@ const Home = () => {
           </div>
         </div>
         <div className="col-md-4 mb-4">
-          <div className=" card text-white bg-success border-sucess">
+          <div className="card text-white bg-success border-sucess">
             <div className="card-body">
               <h5 className="card-title fw-bold">Jane Smith</h5>
               <h6 className="card-subtitle mb-2 text-muted">
@@ -146,13 +149,9 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <hr></hr>
+      <hr />
 
-      {/**TEAM */}
-      {/* Team Section 
-      pictures from
-      https://www.freepik.com/
-      https://unsplash.com/*/}
+      {/* Team Section */}
       <div className="row mt-5 justify-content-center">
         <div className="col-12 text-center">
           <h2 className="display-5 mb-4 fw-bold">Meet Our Team</h2>
@@ -260,12 +259,9 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <hr></hr>
+      <hr />
 
-      {/**open positions
-       * for reference(design): https://dhimahi.com/jobs/#openPositions
-       * https://getbootstrap.com/docs/4.0/components/list-group/
-       */}
+      {/* Open Positions Section */}
       <div className="container mt-5">
         <div className="text-center col-7 mx-auto">
           <h2 className="font-weight-bold ">Open Positions</h2>
@@ -299,31 +295,19 @@ const Home = () => {
           >
             <div>
               <h5 className="mb-1">Logistics Coordinator</h5>
-              <small>Manage and coordinate logistic opeartions</small>
+              <small>Manage shipper-client relationships</small>
             </div>
             <div>
               <i className="fa-solid fa-arrow-right"></i>
             </div>
           </div>
           <div
-            className="list-group-item d-flex justify-content-between align-items-center "
-            onClick={() => navigate("/openPositions/WarehouseManager")}
+            className="list-group-item d-flex justify-content-between align-items-center"
+            onClick={() => navigate("/openPositions/MarketingManager")}
           >
             <div>
-              <h5 className="mb-1">Warehouse Manager</h5>
-              <small>Oversee warehouse operations and staff</small>
-            </div>
-            <div>
-              <i className="fa-solid fa-arrow-right"></i>
-            </div>
-          </div>
-          <div
-            className="list-group-item d-flex justify-content-between align-items-center "
-            onClick={() => navigate("/openPositions/SupplyChainAnalyst")}
-          >
-            <div>
-              <h5 className="mb-1">Supply Chain Analyst</h5>
-              <small>Analyze and optimize supply chain processes</small>
+              <h5 className="mb-1">Marketing Manager</h5>
+              <small>Own marketing strategy</small>
             </div>
             <div>
               <i className="fa-solid fa-arrow-right"></i>
