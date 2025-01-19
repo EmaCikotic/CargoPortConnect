@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/users");
-const db = require("../config/database");
+const db = require("../config/dcConn");
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
