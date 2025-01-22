@@ -33,11 +33,6 @@ const Header = () => {
                   Register
                 </Link>
               </li>
-              <li className="nav-item">
-                <Link to="/signin" className="nav-link">
-                  Sign In
-                </Link>
-              </li>
             </>
           )}
           <li className="nav-item">

@@ -1,21 +1,30 @@
-const connection = require("../config/dcConn"); // Ensure this is the correct variable name
+const connection = require("../config/dcConn"); // Database connection
 const User = {};
+
+User.findUserByEmail = async (email) => {
+  const sql = "SELECT * FROM users WHERE email = ?";
+  const [rows] = await connection.query(sql, [email]);
+  return rows.length > 0 ? rows[0] : null; // Return the user if found, otherwise null
+};
 
 User.createUser = async (userData) => {
   const { name, email, password } = userData;
-  const checkEmailSql = "SELECT email FROM users WHERE email = ?";
-  const [existingUser] = await pool.query(checkEmailSql, [email]);
-  if (existingUser.length > 0) {
+
+  // Check if the user already exists
+  const existingUser = await User.findUserByEmail(email);
+  if (existingUser) {
     throw new Error("Email already exists");
   }
-  const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-  try {
-    const [result] = await connection.query(sql, [name, email, password]);
-    return result.insertId;
-  } catch (err) {
-    console.error("Error creating user:", err);
-    throw err;
-  }
+
+  // Insert the new user
+  const insertUserSql =
+    "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+  const [result] = await connection.query(insertUserSql, [
+    name,
+    email,
+    password,
+  ]);
+  return result.insertId;
 };
 
 module.exports = User;

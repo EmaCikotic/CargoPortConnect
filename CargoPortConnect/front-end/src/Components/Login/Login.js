@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../Configuration";
 
-const SignIn = () => {
+const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -27,7 +27,13 @@ const SignIn = () => {
 
   const isValidForm = () => {
     const { email, password } = formData;
-    return validateEmail(email) && password.length >= 8;
+    const newErrors = {};
+    if (!validateEmail(email)) newErrors.email = "Invalid email format";
+    if (password.length < 8)
+      newErrors.password = "Password must be at least 8 characters";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
@@ -44,18 +50,20 @@ const SignIn = () => {
     }
 
     try {
-      const response = await axios.post(`${API_URL}/api/users/register`, {
+      const response = await axios.post(`${API_URL}/api/users/login`, {
         email: formData.email,
         password: formData.password,
       });
+
       if (response.status === 200) {
+        const token = response.data.token;
+        localStorage.setItem("token", token);
         Swal.fire({
           title: "Login Successful!",
-          text: "Welcome back!",
           icon: "success",
           confirmButtonText: "OK",
         }).then(() => {
-          navigate("/");
+          navigate("/addContainer");
         });
       }
     } catch (error) {
@@ -81,7 +89,7 @@ const SignIn = () => {
     <div className="container mt-5">
       <div className="row justify-content-center">
         <div className="col-md-6 bg-light p-4 rounded-4">
-          <h2 className="text-center mb-4">Sign In</h2>
+          <h2 className="text-center mb-4">Login</h2>
           <form onSubmit={handleSubmit}>
             {/* Email Input */}
             <div className="form-group mb-3">
@@ -125,7 +133,7 @@ const SignIn = () => {
 
             {/* Submit Button */}
             <button type="submit" className="btn btn-primary btn-block">
-              Sign In
+              Login
             </button>
           </form>
         </div>
@@ -134,4 +142,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default Login;

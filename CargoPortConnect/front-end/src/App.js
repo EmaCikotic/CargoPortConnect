@@ -12,7 +12,7 @@ import WarehouseManager from "./Components/WarehouseManager/WarehouseManager";
 import SupplyChainAnalyst from "./Components/SupplyChainAnalyst/SupplyChainAnalyst";
 import TwoFA from "./Components/TwoFA/2FA";
 import Register from "./Components/Register/Register";
-import SignIn from "./Components/SignUp/SignUp";
+import Login from "./Components/Login/Login";
 import AddContainer from "./Components/AddContainer/AddContainer";
 import Collection from "./Components/Collection/Collection";
 import { UserProvider } from "./Components/UserProvider/UserProvider";
@@ -28,7 +28,7 @@ function App() {
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/services" element={<Services />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/signin" element={<SignIn />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/addContainer" element={<AddContainer />} />
             <Route path="/collection" element={<Collection />} />
             <Route

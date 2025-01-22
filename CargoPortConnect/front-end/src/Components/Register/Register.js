@@ -3,7 +3,6 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../Configuration";
 import axios from "axios";
-import { useUser } from "../UserProvider/UserProvider";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -19,13 +18,14 @@ const Register = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors((prev) => ({ ...prev, [e.target.name]: "" })); // Clear field-specific errors
   };
 
   const validateEmail = (email) => {
     return String(email)
       .toLowerCase()
       .match(
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/ // Simplified email regex
       );
   };
 
@@ -33,7 +33,8 @@ const Register = () => {
     const { name, email, password, confirmPassword } = formData;
     const newErrors = {};
 
-    if (!name) newErrors.name = "Name is required";
+    if (!name || name.length < 3)
+      newErrors.name = "Name must be at least 3 characters";
     if (!validateEmail(email)) newErrors.email = "Invalid email format";
     if (password.length < 8)
       newErrors.password = "Password must be at least 8 characters";
@@ -53,8 +54,6 @@ const Register = () => {
     });
   };
 
-  const { setIsAuthenticated } = useUser();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValidForm()) {
@@ -63,7 +62,6 @@ const Register = () => {
         title: "Oops...",
         text: "Please fill in the form correctly!",
         allowOutsideClick: false,
-        timer: 1500,
       });
       return;
     }
@@ -79,31 +77,26 @@ const Register = () => {
         Swal.fire({
           icon: "success",
           title: "Success!",
-          text: "Registration successful!",
+          text: "Registration successful! Please log in.",
           timer: 1500,
         });
-        // Update the authentication state and localStorage
-        localStorage.setItem("isAuthenticated", "true");
-        setIsAuthenticated(true); // Update global state
-        navigate("/"); // Redirect to home or another authenticated page
+        clearForm();
+        navigate("/login");
       }
     } catch (error) {
       if (error.response && error.response.status === 409) {
         Swal.fire({
           icon: "error",
-          text: "User with this email already exists",
-          footer: '<a href="/signin">Sign In?</a>',
-          allowOutsideClick: false,
+          text: "A user with this email already exists.",
         });
         setFormData((prevState) => ({ ...prevState, email: "" }));
       } else {
         Swal.fire({
           icon: "error",
-          title: "Error!",
+          title: "Error",
           text:
             error.response?.data?.message ||
-            "An unknown error occurred during registration.",
-          allowOutsideClick: false,
+            "An unknown error occurred. Please try again later.",
         });
       }
     }
@@ -114,11 +107,8 @@ const Register = () => {
       <div className="row justify-content-center">
         <div className="col-md-6 bg-light p-4 rounded-4">
           <h2 className="text-center mb-4">Register</h2>
-          <h5 className="text-left mb-4">
-            Fields marked with * are{" "}
-            <strong className="border-bottom">mandatory</strong>
-          </h5>
           <form onSubmit={handleSubmit}>
+            {/* Name Field */}
             <div className="form-group mb-3">
               <label htmlFor="name" className="fw-bold">
                 Name and Surname*
@@ -136,6 +126,8 @@ const Register = () => {
                 <div className="invalid-feedback">{errors.name}</div>
               )}
             </div>
+
+            {/* Email Field */}
             <div className="form-group mb-3">
               <label htmlFor="email" className="fw-bold">
                 Email*
@@ -153,76 +145,72 @@ const Register = () => {
                 <div className="invalid-feedback">{errors.email}</div>
               )}
             </div>
+
+            {/* Password Field */}
             <div className="form-group mb-3">
               <label htmlFor="password" className="fw-bold">
                 Password*
               </label>
-              <div className="input-group">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className={`form-control ${
-                    errors.password ? "is-invalid" : ""
-                  }`}
-                  id="password"
-                  name="password"
-                  placeholder="At least 8 characters"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-                <div className="input-group-append">
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary mx-2"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
-              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                className={`form-control ${
+                  errors.password ? "is-invalid" : ""
+                }`}
+                id="password"
+                name="password"
+                placeholder="At least 8 characters"
+                value={formData.password}
+                onChange={handleChange}
+              />
               {errors.password && (
                 <div className="invalid-feedback">{errors.password}</div>
               )}
             </div>
-            <div className="form-group mb-4">
+
+            {/* Confirm Password Field */}
+            <div className="form-group mb-3">
               <label htmlFor="confirmPassword" className="fw-bold">
-                Password Confirmation*
+                Confirm Password*
               </label>
-              <div className="input-group">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className={`form-control ${
-                    errors.confirmPassword ? "is-invalid" : ""
-                  }`}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  placeholder="At least 8 characters"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
-                <div className="input-group-append">
-                  <button
-                    type="button"
-                    className="btn btn-outline-secondary mx-2"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
-              </div>
+              <input
+                type={showPassword ? "text" : "password"}
+                className={`form-control ${
+                  errors.confirmPassword ? "is-invalid" : ""
+                }`}
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="Re-enter password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+              />
               {errors.confirmPassword && (
-                <div className="invalid-feedback">{errors.confirmPassword}</div>
+                <div className="invalid-feedback">
+                  {errors.confirmPassword}
+                </div>
               )}
             </div>
-            <div>
-              <button type="submit" className="btn btn-primary btn-block">
-                Create Profile
+
+            {/* Toggle Password Visibility */}
+            <div className="mb-3">
+              <input
+                type="checkbox"
+                checked={showPassword}
+                onChange={() => setShowPassword(!showPassword)}
+              />{" "}
+              Show Password
+            </div>
+
+            {/* Buttons */}
+            <div className="d-flex justify-content-between">
+              <button type="submit" className="btn btn-primary">
+                Register
               </button>
               <button
                 type="button"
-                className="btn btn-secondary btn-block mx-2"
-                onClick={() => navigate("/signin")}
+                className="btn btn-secondary"
+                onClick={() => navigate("/login")}
               >
-                Already Have One?
+                Go to Login
               </button>
             </div>
           </form>
