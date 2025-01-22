@@ -1,0 +1,72 @@
+.homePage {
+  background-color: #f0f8ff;
+  padding: 2rem;
+}
+
+.contact {
+  text-decoration: none;
+  border: #007bff 2px solid;
+  border-radius: 5px;
+}
+
+.teamImage {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.list-group-item:hover {
+  background-color: rgba(
+    0,
+    123,
+    255,
+    0.1
+  ); /* Lighten the background on hover */
+  cursor: pointer;
+}
+
+/* Welcome Section CSS */
+.welcomeContainer {
+  position: relative;
+  height: 100vh;
+}
+
+.slideInContent {
+  animation: slideInLeft 0.6s ease-out forwards;
+}
+
+.slideInContentright {
+  animation: slideInRight 0.6s ease-out forwards;
+}
+
+/* Left Slide In Animation */
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Right Slide In Animation */
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}

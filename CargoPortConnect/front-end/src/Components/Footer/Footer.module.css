@@ -1,0 +1,9 @@
+.social_media_link {
+  color: rgb(30, 48, 80);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.social_media_link:hover {
+  transform: scale(1.2);
+}
