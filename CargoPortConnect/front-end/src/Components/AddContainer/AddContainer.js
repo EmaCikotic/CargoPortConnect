@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../Configuration";
-import axios from "axios";
 
 const AddContainer = () => {
   const navigate = useNavigate();
@@ -23,15 +23,14 @@ const AddContainer = () => {
     hazardous_material: false,
   });
 
-  const [errors, setErrors] = useState({});
+  const [error, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
-    setContainerDetails((prevState) => ({
-      ...prevState,
+    setContainerDetails({
+      ...containerDetails,
       [name]: type === "checkbox" ? checked : value,
-    }));
+    });
   };
 
   const isValidForm = () => {
@@ -62,24 +61,6 @@ const AddContainer = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const clearForm = () => {
-    setContainerDetails({
-      container_number: "",
-      container_type: "",
-      cargo_description: "",
-      shipping_line: "",
-      port_of_origin: "",
-      port_of_destination: "",
-      ship_name: "",
-      voyage: "",
-      etd: "",
-      eta: "",
-      bl_number: "",
-      booking_number: "",
-      hazardous_material: false,
-    });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -88,69 +69,41 @@ const AddContainer = () => {
         icon: "error",
         title: "Oops...",
         text: "Please fill in the form correctly!",
-        allowOutsideClick: false,
       });
       return;
     }
 
     try {
-      console.log("Submitting data:", containerDetails);
-
       const token = localStorage.getItem("token");
-      //const token = localStorage.getItem("token");
-
-      /*if (!token) {
-        Swal.fire(
-          "Error",
-          "You must be logged in to add a container.",
-          "error"
-        );
+      if (!token) {
+        Swal.fire("Error", "You must be logged in.", "error");
+        navigate("/login");
         return;
-      }*/
+      }
 
       const response = await axios.post(
         `${API_URL}/api/containers/addcontainer`,
-        {
-          ...containerDetails,
-        },
+        containerDetails,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the request header
+            Authorization: `Bearer ${token}`, // Add token to headers
           },
         }
       );
 
       if (response.status === 201) {
-        localStorage.setItem("token", token);
-        console.log("Token being sent:", token);
-        Swal.fire({
-          icon: "success",
-          title: "Success!",
-          text: "Container added successfully!",
-          timer: 1500,
-        });
-        clearForm();
-        navigate("/collection");
+        Swal.fire("Success!", "Container added successfully!", "success");
+        navigate("/collection"); // Redirect after successful addition
       }
     } catch (error) {
-      console.error("Error submitting container:", error);
       if (error.response?.status === 401) {
-        Swal.fire({
-          icon: "error",
-          title: "Session Expired",
-          text: "Your session has expired. Please log in again.",
-        });
-        navigate("/login"); // Redirect to login
+        Swal.fire("Error", "Session expired. Please log in again.", "error");
+        navigate("/login");
       } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred. Please try again.",
-        });
+        Swal.fire("Error", "Failed to add container.", "error");
       }
     }
   };
-
   return (
     <div className="container my-5">
       <div className="row justify-content-center">
@@ -168,7 +121,7 @@ const AddContainer = () => {
               <input
                 type="text"
                 className={`form-control ${
-                  errors.container_number ? "is-invalid" : ""
+                  error.container_number ? "is-invalid" : ""
                 }`}
                 id="containerNumber"
                 name="container_number"
@@ -176,10 +129,8 @@ const AddContainer = () => {
                 value={containerDetails.container_number}
                 onChange={handleChange}
               />
-              {errors.container_number && (
-                <div className="invalid-feedback">
-                  {errors.container_number}
-                </div>
+              {error.container_number && (
+                <div className="invalid-feedback">{error.container_number}</div>
               )}
             </div>
 
@@ -189,7 +140,7 @@ const AddContainer = () => {
               </label>
               <select
                 className={`form-control ${
-                  errors.container_type ? "is-invalid" : ""
+                  error.container_type ? "is-invalid" : ""
                 }`}
                 id="containerType"
                 name="container_type"
@@ -201,8 +152,8 @@ const AddContainer = () => {
                 <option value="40ft Standard">40ft Standard</option>
                 <option value="Refrigerated">Refrigerated</option>
               </select>
-              {errors.container_type && (
-                <div className="invalid-feedback">{errors.container_type}</div>
+              {error.container_type && (
+                <div className="invalid-feedback">{error.container_type}</div>
               )}
             </div>
 
@@ -213,7 +164,7 @@ const AddContainer = () => {
               <input
                 type="text"
                 className={`form-control ${
-                  errors.cargo_description ? "is-invalid" : ""
+                  error.cargo_description ? "is-invalid" : ""
                 }`}
                 id="cargoDescription"
                 name="cargo_description"
@@ -221,9 +172,9 @@ const AddContainer = () => {
                 value={containerDetails.cargo_description}
                 onChange={handleChange}
               />
-              {errors.cargo_description && (
+              {error.cargo_description && (
                 <div className="invalid-feedback">
-                  {errors.cargo_description}
+                  {error.cargo_description}
                 </div>
               )}
             </div>
@@ -235,7 +186,7 @@ const AddContainer = () => {
               <input
                 type="text"
                 className={`form-control ${
-                  errors.shipping_line ? "is-invalid" : ""
+                  error.shipping_line ? "is-invalid" : ""
                 }`}
                 id="shippingLine"
                 name="shipping_line"
@@ -243,8 +194,8 @@ const AddContainer = () => {
                 value={containerDetails.shipping_line}
                 onChange={handleChange}
               />
-              {errors.shipping_line && (
-                <div className="invalid-feedback">{errors.shipping_line}</div>
+              {error.shipping_line && (
+                <div className="invalid-feedback">{error.shipping_line}</div>
               )}
             </div>
 
@@ -255,7 +206,7 @@ const AddContainer = () => {
               <input
                 type="text"
                 className={`form-control ${
-                  errors.port_of_origin ? "is-invalid" : ""
+                  error.port_of_origin ? "is-invalid" : ""
                 }`}
                 id="portOfOrigin"
                 name="port_of_origin"
@@ -263,8 +214,8 @@ const AddContainer = () => {
                 value={containerDetails.port_of_origin}
                 onChange={handleChange}
               />
-              {errors.port_of_origin && (
-                <div className="invalid-feedback">{errors.port_of_origin}</div>
+              {error.port_of_origin && (
+                <div className="invalid-feedback">{error.port_of_origin}</div>
               )}
             </div>
 
@@ -275,7 +226,7 @@ const AddContainer = () => {
               <input
                 type="text"
                 className={`form-control ${
-                  errors.port_of_destination ? "is-invalid" : ""
+                  error.port_of_destination ? "is-invalid" : ""
                 }`}
                 id="portOfDestination"
                 name="port_of_destination"
@@ -283,9 +234,9 @@ const AddContainer = () => {
                 value={containerDetails.port_of_destination}
                 onChange={handleChange}
               />
-              {errors.port_of_destination && (
+              {error.port_of_destination && (
                 <div className="invalid-feedback">
-                  {errors.port_of_destination}
+                  {error.port_of_destination}
                 </div>
               )}
             </div>
@@ -297,7 +248,7 @@ const AddContainer = () => {
               <input
                 type="text"
                 className={`form-control ${
-                  errors.ship_name ? "is-invalid" : ""
+                  error.ship_name ? "is-invalid" : ""
                 }`}
                 id="shipName"
                 name="ship_name"
@@ -305,8 +256,8 @@ const AddContainer = () => {
                 value={containerDetails.ship_name}
                 onChange={handleChange}
               />
-              {errors.ship_name && (
-                <div className="invalid-feedback">{errors.ship_name}</div>
+              {error.ship_name && (
+                <div className="invalid-feedback">{error.ship_name}</div>
               )}
             </div>
 
@@ -316,15 +267,15 @@ const AddContainer = () => {
               </label>
               <input
                 type="text"
-                className={`form-control ${errors.voyage ? "is-invalid" : ""}`}
+                className={`form-control ${error.voyage ? "is-invalid" : ""}`}
                 id="voyage"
                 name="voyage"
                 placeholder="Enter voyage"
                 value={containerDetails.voyage}
                 onChange={handleChange}
               />
-              {errors.voyage && (
-                <div className="invalid-feedback">{errors.voyage}</div>
+              {error.voyage && (
+                <div className="invalid-feedback">{error.voyage}</div>
               )}
             </div>
 
@@ -334,15 +285,13 @@ const AddContainer = () => {
               </label>
               <input
                 type="date"
-                className={`form-control ${errors.etd ? "is-invalid" : ""}`}
+                className={`form-control ${error.etd ? "is-invalid" : ""}`}
                 id="etd"
                 name="etd"
                 value={containerDetails.etd}
                 onChange={handleChange}
               />
-              {errors.etd && (
-                <div className="invalid-feedback">{errors.etd}</div>
-              )}
+              {error.etd && <div className="invalid-feedback">{error.etd}</div>}
             </div>
 
             <div className="form-group mb-3">
@@ -351,15 +300,13 @@ const AddContainer = () => {
               </label>
               <input
                 type="date"
-                className={`form-control ${errors.eta ? "is-invalid" : ""}`}
+                className={`form-control ${error.eta ? "is-invalid" : ""}`}
                 id="eta"
                 name="eta"
                 value={containerDetails.eta}
                 onChange={handleChange}
               />
-              {errors.eta && (
-                <div className="invalid-feedback">{errors.eta}</div>
-              )}
+              {error.eta && <div className="invalid-feedback">{error.eta}</div>}
             </div>
 
             <div className="form-group mb-3">
@@ -369,7 +316,7 @@ const AddContainer = () => {
               <input
                 type="text"
                 className={`form-control ${
-                  errors.bl_number ? "is-invalid" : ""
+                  error.bl_number ? "is-invalid" : ""
                 }`}
                 id="blNumber"
                 name="bl_number"
@@ -377,8 +324,8 @@ const AddContainer = () => {
                 value={containerDetails.bl_number}
                 onChange={handleChange}
               />
-              {errors.bl_number && (
-                <div className="invalid-feedback">{errors.bl_number}</div>
+              {error.bl_number && (
+                <div className="invalid-feedback">{error.bl_number}</div>
               )}
             </div>
 
@@ -389,7 +336,7 @@ const AddContainer = () => {
               <input
                 type="text"
                 className={`form-control ${
-                  errors.booking_number ? "is-invalid" : ""
+                  error.booking_number ? "is-invalid" : ""
                 }`}
                 id="bookingNumber"
                 name="booking_number"
@@ -397,8 +344,8 @@ const AddContainer = () => {
                 value={containerDetails.booking_number}
                 onChange={handleChange}
               />
-              {errors.booking_number && (
-                <div className="invalid-feedback">{errors.booking_number}</div>
+              {error.booking_number && (
+                <div className="invalid-feedback">{error.booking_number}</div>
               )}
             </div>
 

@@ -13,10 +13,12 @@ const Login = () => {
 
   const [errors, setErrors] = useState({});
 
+  // Handle input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Validate email format
   const validateEmail = (email) => {
     return String(email)
       .toLowerCase()
@@ -25,6 +27,7 @@ const Login = () => {
       );
   };
 
+  // Validate the form
   const isValidForm = () => {
     const { email, password } = formData;
     const newErrors = {};
@@ -39,56 +42,41 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!isValidForm()) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Please fill in the form correctly!",
-        allowOutsideClick: false,
-      });
-      return;
-    }
+    console.log("Submitting login form:", formData);
 
     try {
-      const response = await axios.post(`${API_URL}/api/users/login`, {
-        email: formData.email,
-        password: formData.password,
-      });
+      const response = await axios.post(`${API_URL}/api/users/login`, formData);
+
+      console.log("Full backend response:", response); // Log the full response
 
       if (response.status === 200) {
         const token = response.data.token;
+        const userId = response.data.user_id;
+
+        console.log("Token:", token); // Log the token
+        console.log("User ID:", userId); // Log the user ID
+
         localStorage.setItem("token", token);
-        Swal.fire({
-          title: "Login Successful!",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then(() => {
+        localStorage.setItem("user_id", userId);
+
+        Swal.fire("Login successful", "", "success").then(() => {
           navigate("/addContainer");
         });
       }
     } catch (error) {
-      if (error.response && error.response.status === 401) {
-        Swal.fire({
-          icon: "error",
-          title: "Failed to Log In",
-          text: "Incorrect email or password. Please try again.",
-          allowOutsideClick: false,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An error occurred. Please try again later.",
-          allowOutsideClick: false,
-        });
-      }
+      console.error("Login error:", error); // Log any errors
+      Swal.fire(
+        "Login failed",
+        error.response?.data?.message || "Error",
+        "error"
+      );
     }
   };
 
   return (
     <div className="container mt-5">
       <div className="row justify-content-center">
-        <div className="col-md-6 bg-light p-4 rounded-4">
+        <div className="col-md-6 bg-light p-4 rounded-3 shadow">
           <h2 className="text-center mb-4">Login</h2>
           <form onSubmit={handleSubmit}>
             {/* Email Input */}
@@ -104,6 +92,7 @@ const Login = () => {
                 placeholder="example@example.com"
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
               {errors.email && (
                 <div className="invalid-feedback">{errors.email}</div>
@@ -125,6 +114,7 @@ const Login = () => {
                 placeholder="Enter at least 8 characters"
                 value={formData.password}
                 onChange={handleChange}
+                required
               />
               {errors.password && (
                 <div className="invalid-feedback">{errors.password}</div>
@@ -132,7 +122,7 @@ const Login = () => {
             </div>
 
             {/* Submit Button */}
-            <button type="submit" className="btn btn-primary btn-block">
+            <button type="submit" className="btn btn-primary w-100">
               Login
             </button>
           </form>

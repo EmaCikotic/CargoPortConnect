@@ -15,44 +15,41 @@ import Register from "./Components/Register/Register";
 import Login from "./Components/Login/Login";
 import AddContainer from "./Components/AddContainer/AddContainer";
 import Collection from "./Components/Collection/Collection";
-import { UserProvider } from "./Components/UserProvider/UserProvider";
 
 function App() {
   return (
-    <UserProvider>
-      <Router>
-        <div className="App">
-          <Header />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/aboutus" element={<AboutUs />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/addContainer" element={<AddContainer />} />
-            <Route path="/collection" element={<Collection />} />
-            <Route
-              path="/openPositions/backendEngineer"
-              element={<BackendEngineer />}
-            />
-            <Route
-              path="/openPositions/LogisticsCoordinator"
-              element={<LogisticsCoordinator />}
-            />
-            <Route
-              path="/openPositions/WarehouseManager"
-              element={<WarehouseManager />}
-            />
-            <Route
-              path="/openPositions/SupplyChainAnalyst"
-              element={<SupplyChainAnalyst />}
-            />
-            <Route path="/confirmation" element={<TwoFA />} />
-          </Routes>
-          <Footer />
-        </div>
-      </Router>
-    </UserProvider>
+    <Router>
+      <div className="App">
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/aboutus" element={<AboutUs />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/addContainer" element={<AddContainer />} />
+          <Route path="/collection" element={<Collection />} />
+          <Route
+            path="/openPositions/backendEngineer"
+            element={<BackendEngineer />}
+          />
+          <Route
+            path="/openPositions/LogisticsCoordinator"
+            element={<LogisticsCoordinator />}
+          />
+          <Route
+            path="/openPositions/WarehouseManager"
+            element={<WarehouseManager />}
+          />
+          <Route
+            path="/openPositions/SupplyChainAnalyst"
+            element={<SupplyChainAnalyst />}
+          />
+          <Route path="/confirmation" element={<TwoFA />} />
+        </Routes>
+        <Footer />
+      </div>
+    </Router>
   );
 }
 

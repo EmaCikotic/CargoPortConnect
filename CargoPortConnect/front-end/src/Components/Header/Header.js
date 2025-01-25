@@ -1,16 +1,14 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useUser } from "../UserProvider/UserProvider";
 import styles from "./Header.module.css";
 
 const Header = () => {
-  const { isAuthenticated, setIsAuthenticated } = useUser();
   const navigate = useNavigate();
+  const isAuthenticated = Boolean(localStorage.getItem("token")); // Check if token exists
 
   const handleLogout = () => {
-    localStorage.removeItem("isAuthenticated");
-    setIsAuthenticated(false);
-    navigate("/");
+    localStorage.removeItem("token"); // Remove token from localStorage
+    navigate("/"); // Redirect to home page
   };
 
   return (
@@ -27,13 +25,11 @@ const Header = () => {
             </Link>
           </li>
           {!isAuthenticated && (
-            <>
-              <li className="nav-item">
-                <Link to="/register" className="nav-link">
-                  Register
-                </Link>
-              </li>
-            </>
+            <li className="nav-item">
+              <Link to="/register" className="nav-link">
+                Register
+              </Link>
+            </li>
           )}
           <li className="nav-item">
             <Link to="/aboutus" className="nav-link">
