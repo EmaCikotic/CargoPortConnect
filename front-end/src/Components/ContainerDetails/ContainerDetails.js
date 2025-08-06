@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import jsPDF from "jspdf";
 import { API_URL } from "../../Configuration";
+import Swal from "sweetalert2";
 
 const ContainerDetails = () => {
   const { id } = useParams();
@@ -117,6 +118,29 @@ const ContainerDetails = () => {
     doc.save(`${container.container_number}_details.pdf`);
   };
 
+  const handleDelete = async () => {
+    const confirm = await Swal.fire({
+      title: "Are you sure?",
+      text: "This container will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirm.isConfirmed) {
+      try {
+        await axios.delete(`${API_URL}/api/containers/${id}`);
+        await Swal.fire("Deleted!", "Container has been removed.", "success");
+        navigate("/collection");
+      } catch (err) {
+        console.error("Delete error:", err);
+        Swal.fire("Error", "Failed to delete container.", "error");
+      }
+    }
+  };
+
   if (loading) return <p className="text-center mt-5">Loading...</p>;
   if (!container)
     return <p className="text-center mt-5">Container not found</p>;
@@ -214,6 +238,21 @@ const ContainerDetails = () => {
         <div className="d-flex justify-content-end mt-4">
           <button className="btn btn-primary" onClick={handleDownload}>
             Download as PDF
+          </button>
+        </div>
+
+        <div className="d-flex justify-content-end mt-2">
+          <button
+            className="btn btn-outline-primary me-3"
+            onClick={() => navigate(`/container/${id}/edit`)}
+          >
+            Edit
+          </button>
+        </div>
+
+        <div className="d-flex justify-content-end mt-4">
+          <button className="btn btn-danger" onClick={handleDelete}>
+            Delete
           </button>
         </div>
       </div>

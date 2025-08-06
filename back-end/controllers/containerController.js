@@ -138,3 +138,76 @@ exports.getFilteredContainers = async (req, res) => {
     return res.status(500).json({ message: "Error fetching containers." });
   }
 };
+
+// Update container by ID
+exports.updateContainerById = async (req, res) => {
+  const id = req.params.id;
+  const {
+    container_number,
+    arrival_date,
+    departure_date,
+    ship_name,
+    ship_voyage,
+    BL_number,
+    consignee,
+    shipper,
+    origin_port,
+    destination_port,
+    status,
+  } = req.body;
+
+  try {
+    const query = `
+      UPDATE Container SET
+        container_number = ?,
+        arrival_date = ?,
+        departure_date = ?,
+        ship_name = ?,
+        ship_voyage = ?,
+        BL_number = ?,
+        consignee = ?,
+        shipper = ?,
+        origin_port = ?,
+        destination_port = ?,
+        status = ?
+      WHERE id = ?
+    `;
+
+    const params = [
+      container_number,
+      arrival_date,
+      departure_date,
+      ship_name,
+      ship_voyage,
+      BL_number,
+      consignee,
+      shipper,
+      origin_port,
+      destination_port,
+      status,
+      id,
+    ];
+
+    const [result] = await Container.executeQuery(query, params);
+
+    res.status(200).json({ message: "Container updated successfully." });
+  } catch (err) {
+    console.error("Error updating container:", err.message);
+    res.status(500).json({ message: "Error updating container." });
+  }
+};
+
+// Delete container by ID
+exports.deleteContainerById = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const query = "DELETE FROM Container WHERE id = ?";
+    const [result] = await Container.executeQuery(query, [id]);
+
+    res.status(200).json({ message: "Container deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting container:", err.message);
+    res.status(500).json({ message: "Error deleting container." });
+  }
+};
