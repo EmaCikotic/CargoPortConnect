@@ -74,9 +74,9 @@ const Login = () => {
   };
 
   return (
-    <div className="container mt-5">
+    <div className="container my-5">
       <div className="row justify-content-center">
-        <div className="col-md-6 bg-light p-4 rounded-3 shadow">
+        <div className="col-md-4 bg-light my-5 p-4 rounded-3 shadow">
           <h2 className="text-center mb-4">Login</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group mb-3">

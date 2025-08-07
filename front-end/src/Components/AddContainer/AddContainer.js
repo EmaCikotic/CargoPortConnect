@@ -105,9 +105,9 @@ const AddContainer = () => {
   return (
     <div className="container my-5">
       <div className="row justify-content-center">
-        <div className="col-md-6 bg-light p-4 rounded-4">
-          <h2 className="text-center mb-4">Add Container</h2>
-          <h5 className="text-left mb-4">
+        <div className="col-md-5 bg-light p-4 rounded-4">
+          <h3 className="text-center mb-4">Add Container</h3>
+          <h5 className="text-left mb-4 ">
             Fields marked with * are{" "}
             <strong className="border-bottom">mandatory</strong>
           </h5>
@@ -233,34 +233,77 @@ const AddContainer = () => {
               <label htmlFor="consignee" className="fw-bold">
                 Consignee*
               </label>
-              <input
-                type="text"
+              <select
                 className={`form-control ${
                   error.consignee ? "is-invalid" : ""
                 }`}
                 id="consignee"
                 name="consignee"
-                placeholder="Enter consignee"
                 value={containerDetails.consignee}
                 onChange={handleChange}
-              />
+              >
+                <option value="">Select consignee</option>
+                <option value="EurolImport Handels GmbH">
+                  EurolImport Handels GmbH
+                </option>
+                <option value="Global Freight Ltd.">Global Freight Ltd.</option>
+                <option value="PortaTrade International">
+                  PortaTrade International
+                </option>
+                <option value="Maritime Hub AG">Maritime Hub AG</option>
+                <option value="Continental Cargo Co.">
+                  Continental Cargo Co.
+                </option>
+                <option value="Oceanic Supplies Ltd.">
+                  Oceanic Supplies Ltd.
+                </option>
+                <option value="HarborLink Logistics">
+                  HarborLink Logistics
+                </option>
+                <option value="North Sea Importers">North Sea Importers</option>
+                <option value="Asia-Europe Traders">Asia-Europe Traders</option>
+                <option value="BalticBridge GmbH">BalticBridge GmbH</option>
+              </select>
               {error.consignee && (
                 <div className="invalid-feedback">{error.consignee}</div>
               )}
             </div>
+
             <div className="form-group mb-3">
               <label htmlFor="shipper" className="fw-bold">
                 Shipper*
               </label>
-              <input
-                type="text"
+              <select
                 className={`form-control ${error.shipper ? "is-invalid" : ""}`}
                 id="shipper"
                 name="shipper"
-                placeholder="Enter Shipper"
                 value={containerDetails.shipper}
                 onChange={handleChange}
-              />
+              >
+                <option value="">Select shipper</option>
+                <option value="Pacific Ocean Export Ltd.">
+                  Pacific Ocean Export Ltd.
+                </option>
+                <option value="TransMarine Co.">TransMarine Co.</option>
+                <option value="Asian Freight Movers">
+                  Asian Freight Movers
+                </option>
+                <option value="Seaway Logistics">Seaway Logistics</option>
+                <option value="Seaway Logistics">
+                  Mediterranean Shipping Company
+                </option>
+
+                <option value="EastWest Traders">EastWest Traders</option>
+                <option value="OceanTrade Global">OceanTrade Global</option>
+                <option value="SeaPort Shippers">SeaPort Shippers</option>
+                <option value="Mediterranean Freight Co.">
+                  Mediterranean Freight Co.
+                </option>
+                <option value="Atlantic Export Hub">Atlantic Export Hub</option>
+                <option value="FreightMasters Intl.">
+                  FreightMasters Intl.
+                </option>
+              </select>
               {error.shipper && (
                 <div className="invalid-feedback">{error.shipper}</div>
               )}
@@ -270,17 +313,27 @@ const AddContainer = () => {
               <label htmlFor="origin_port" className="fw-bold">
                 Port of Origin*
               </label>
-              <input
-                type="text"
+              <select
                 className={`form-control ${
                   error.origin_port ? "is-invalid" : ""
                 }`}
                 id="origin_port"
                 name="origin_port"
-                placeholder="Enter port of origin"
                 value={containerDetails.origin_port}
                 onChange={handleChange}
-              />
+              >
+                <option value="">Select origin port</option>
+                <option value="Shanghai">Shanghai</option>
+                <option value="Singapore">Singapore</option>
+                <option value="Rotterdam">Rotterdam</option>
+                <option value="Hamburg">Hamburg</option>
+                <option value="Busan">Busan</option>
+                <option value="Antwerp">Antwerp</option>
+                <option value="Los Angeles">Los Angeles</option>
+                <option value="Dubai">Dubai</option>
+                <option value="Port Klang">Port Klang</option>
+                <option value="Tokyo">Tokyo</option>
+              </select>
               {error.origin_port && (
                 <div className="invalid-feedback">{error.origin_port}</div>
               )}
@@ -290,24 +343,39 @@ const AddContainer = () => {
               <label htmlFor="destination_port" className="fw-bold">
                 Port of Destination*
               </label>
-              <input
-                type="text"
+              <select
                 className={`form-control ${
                   error.destination_port ? "is-invalid" : ""
                 }`}
                 id="destination_port"
                 name="destination_port"
-                placeholder="Enter port of destination"
                 value={containerDetails.destination_port}
                 onChange={handleChange}
-              />
+              >
+                <option value="">Select destination port</option>
+                <option value="Rotterdam">Rotterdam</option>
+                <option value="Antwerp">Antwerp</option>
+                <option value="Hamburg">Hamburg</option>
+                <option value="Rotterdam">Koper</option>
+                <option value="Valencia">Valencia</option>
+                <option value="Gioia Tauro">Gioia Tauro</option>
+                <option value="Felixstowe">Felixstowe</option>
+                <option value="Barcelona">Barcelona</option>
+                <option value="Piraeus">Piraeus</option>
+                <option value="Le Havre">Le Havre</option>
+                <option value="Marseille">Marseille</option>
+              </select>
               {error.destination_port && (
                 <div className="invalid-feedback">{error.destination_port}</div>
               )}
             </div>
           </form>
           <div className="d-flex justify-content-center ">
-            <button type="submit" className="btn btn-primary ">
+            <button
+              type="submit"
+              className="btn btn-primary "
+              onClick={handleSubmit}
+            >
               Submit
             </button>
           </div>

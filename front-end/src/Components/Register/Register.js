@@ -111,7 +111,7 @@ const Register = () => {
   return (
     <div className="container my-5">
       <div className="row justify-content-center">
-        <div className="col-md-6 bg-light p-4 rounded-4">
+        <div className="col-md-4 bg-light  p-3 rounded-3 shadow-sm">
           <h2 className="text-center mb-4">Register</h2>
           <form onSubmit={handleSubmit}>
             {/* Name Field */}

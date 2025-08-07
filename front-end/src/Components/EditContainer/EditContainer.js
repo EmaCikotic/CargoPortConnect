@@ -33,7 +33,8 @@ const EditContainer = () => {
           departure_date: res.data.departure_date?.split("T")[0],
           ship_name: res.data.ship_name,
           ship_voyage: res.data.ship_voyage,
-
+          BL_number: res.data.BL_number,
+          status: res.data.status,
           consignee: res.data.consignee,
           shipper: res.data.shipper,
           origin_port: res.data.origin_port,
@@ -76,9 +77,8 @@ const EditContainer = () => {
       <h2 className="text-center mb-4">Edit Container</h2>
       <form onSubmit={handleSubmit}>
         {Object.entries(form).map(([key, value]) => (
-          <div className="mb-3 " key={key}>
+          <div className="mb-3" key={key}>
             <strong>
-              {" "}
               <label className="form-label text-capitalize">
                 {key.replace(/_/g, " ")}
               </label>
@@ -89,9 +89,11 @@ const EditContainer = () => {
               name={key}
               value={value || ""}
               onChange={handleChange}
+              disabled={key === "status" || key === "BL_number"} 
             />
           </div>
         ))}
+
         <div className="d-flex justify-content-between mb-2">
           <button type="submit" className="btn btn-success">
             Save Changes
