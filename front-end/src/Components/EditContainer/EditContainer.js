@@ -7,6 +7,7 @@ import { API_URL } from "../../Configuration";
 const EditContainer = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     container_number: "",
     arrival_date: "",
@@ -18,7 +19,6 @@ const EditContainer = () => {
     shipper: "",
     origin_port: "",
     destination_port: "",
-    status: "",
   });
 
   useEffect(() => {
@@ -27,7 +27,18 @@ const EditContainer = () => {
         const res = await axios.get(
           `${API_URL}/api/containers/container/${id}`
         );
-        setForm(res.data);
+        setForm({
+          container_number: res.data.container_number,
+          arrival_date: res.data.arrival_date?.split("T")[0],
+          departure_date: res.data.departure_date?.split("T")[0],
+          ship_name: res.data.ship_name,
+          ship_voyage: res.data.ship_voyage,
+
+          consignee: res.data.consignee,
+          shipper: res.data.shipper,
+          origin_port: res.data.origin_port,
+          destination_port: res.data.destination_port,
+        });
       } catch (err) {
         Swal.fire("Error", "Could not fetch container data.", "error");
       }
@@ -41,8 +52,15 @@ const EditContainer = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const cleanedForm = {
+      ...form,
+      arrival_date: form.arrival_date?.split("T")[0],
+      departure_date: form.departure_date?.split("T")[0],
+    };
+
     try {
-      await axios.put(`${API_URL}/api/containers/container/${id}`, form);
+      await axios.put(`${API_URL}/api/containers/container/${id}`, cleanedForm);
       Swal.fire("Success", "Container updated successfully!", "success");
       navigate(`/container/${id}`);
     } catch (err) {
@@ -51,14 +69,20 @@ const EditContainer = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "700px" }}>
-      <h3 className="text-center mb-4">Edit Container</h3>
+    <div
+      className="container mt-5 bg-light rounded p-4 mb-5"
+      style={{ maxWidth: "700px" }}
+    >
+      <h2 className="text-center mb-4">Edit Container</h2>
       <form onSubmit={handleSubmit}>
         {Object.entries(form).map(([key, value]) => (
-          <div className="mb-3" key={key}>
-            <label className="form-label text-capitalize">
-              {key.replace(/_/g, " ")}
-            </label>
+          <div className="mb-3 " key={key}>
+            <strong>
+              {" "}
+              <label className="form-label text-capitalize">
+                {key.replace(/_/g, " ")}
+              </label>
+            </strong>
             <input
               type={key.includes("date") ? "date" : "text"}
               className="form-control"
@@ -68,7 +92,7 @@ const EditContainer = () => {
             />
           </div>
         ))}
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-between mb-2">
           <button type="submit" className="btn btn-success">
             Save Changes
           </button>

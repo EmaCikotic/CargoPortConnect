@@ -131,7 +131,8 @@ const ContainerDetails = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`${API_URL}/api/containers/${id}`);
+        await axios.delete(`${API_URL}/api/containers/container/${id}`);
+
         await Swal.fire("Deleted!", "Container has been removed.", "success");
         navigate("/collection");
       } catch (err) {
@@ -234,26 +235,27 @@ const ContainerDetails = () => {
             <strong>B/L Number:</strong> {container.BL_number}
           </p>
         </div>
+        <div className="d-flex p-2 justify-content-end">
+          <div className="d-flex justify-content-end mt-4">
+            <button className="btn btn-primary" onClick={handleDownload}>
+              Download as PDF
+            </button>
+          </div>
 
-        <div className="d-flex justify-content-end mt-4">
-          <button className="btn btn-primary" onClick={handleDownload}>
-            Download as PDF
-          </button>
-        </div>
+          <div className="d-flex justify-content-end mt-4 mx-3">
+            <button
+              className="btn btn-outline-primary "
+              onClick={() => navigate(`/container/${id}/edit`)}
+            >
+              Edit
+            </button>
+          </div>
 
-        <div className="d-flex justify-content-end mt-2">
-          <button
-            className="btn btn-outline-primary me-3"
-            onClick={() => navigate(`/container/${id}/edit`)}
-          >
-            Edit
-          </button>
-        </div>
-
-        <div className="d-flex justify-content-end mt-4">
-          <button className="btn btn-danger" onClick={handleDelete}>
-            Delete
-          </button>
+          <div className="d-flex justify-content-end mt-4">
+            <button className="btn btn-danger" onClick={handleDelete}>
+              Delete
+            </button>
+          </div>
         </div>
       </div>
 

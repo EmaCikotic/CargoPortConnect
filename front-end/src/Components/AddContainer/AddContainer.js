@@ -305,11 +305,12 @@ const AddContainer = () => {
                 <div className="invalid-feedback">{error.destination_port}</div>
               )}
             </div>
-
-            <button type="submit" className="btn btn-primary btn-block mb-2">
+          </form>
+          <div className="d-flex justify-content-center ">
+            <button type="submit" className="btn btn-primary ">
               Submit
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
