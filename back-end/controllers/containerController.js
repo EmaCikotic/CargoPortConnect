@@ -117,6 +117,22 @@ exports.getContainerById = async (req, res) => {
   }
 };
 
+//get all containers
+
+// Get all containers (admin sees all, user sees only theirs)
+exports.getAllContainers = async (req, res) => {
+  try {
+    const query = "SELECT * FROM Container";
+    const [rows] = await Container.executeQuery(query);
+
+    console.log("ROWS FROM DB:", rows);
+    res.status(200).json(rows);
+  } catch (err) {
+    console.error("Error fetching all containers:", err.message);
+    res.status(500).json({ message: "Error fetching containers." });
+  }
+};
+
 // Filtering containers
 exports.getFilteredContainers = async (req, res) => {
   const { container, bl, etd, eta } = req.query;

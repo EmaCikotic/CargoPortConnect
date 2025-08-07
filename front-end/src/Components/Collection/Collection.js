@@ -46,16 +46,26 @@ const Collection = () => {
 
   const fetchUserContainers = async () => {
     const user_id = localStorage.getItem("user_id");
-    if (!user_id) {
+    const role = localStorage.getItem("role");
+
+    if (!user_id || !role) {
+      Swal.fire("Error", "You must be logged in.", "error");
+      return;
+    }
+
+    if (!user_id || !role) {
       Swal.fire("Error", "You must be logged in.", "error");
       return;
     }
 
     try {
-      const response = await axios.get(
-        `${API_URL}/api/containers/user/${user_id}`
-      );
+      const response =
+        role === "admin"
+          ? await axios.get(`${API_URL}/api/containers`) // admin sees all
+          : await axios.get(`${API_URL}/api/containers/user/${user_id}`); // user sees only theirs
+
       setUserContainers(response.data);
+      console.log("Fetched containers:", response.data);
     } catch (error) {
       console.error("Error fetching containers:", error);
       Swal.fire("Error", "Could not load containers.", "error");

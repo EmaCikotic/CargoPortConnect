@@ -56,7 +56,7 @@ const Login = () => {
         console.log("Login response:", response.data);
 
         localStorage.setItem("user_id", response.data.user_id);
-        localStorage.setItem("user_email", response.data.email); //for .pdf
+        localStorage.setItem("role", response.data.role);
 
         Swal.fire("Login successful", "", "success").then(() => {
           navigate("/addContainer");
