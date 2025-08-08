@@ -2,6 +2,20 @@ const connection = require("../config/dcConn");
 
 const User = {};
 
+User.findUserById = async (id) => {
+  try {
+    const sql = `
+      SELECT id AS userId, name, surname, email, role
+      FROM User
+      WHERE id = ?
+    `;
+    const [rows] = await connection.query(sql, [id]);
+    return rows.length ? rows[0] : null;
+  } catch (error) {
+    console.error("Error finding user by ID:", error.message);
+    throw new Error("Database query error");
+  }
+};
 // Find user by email
 User.findUserByEmail = async (email) => {
   try {

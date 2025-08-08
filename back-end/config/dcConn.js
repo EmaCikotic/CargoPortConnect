@@ -15,6 +15,8 @@ console.log("DATABASE DETAILS:", {
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  SMTP_user: process.env.SMTP_USER,
+  SMTP_pass_length: process.env.SMTP_PASS?.length,
 });
 
 module.exports = conn;

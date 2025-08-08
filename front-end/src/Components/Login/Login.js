@@ -59,7 +59,9 @@ const Login = () => {
         localStorage.setItem("role", response.data.role);
 
         Swal.fire("Login successful", "", "success").then(() => {
-          navigate("/addContainer");
+          response.data.role === "admin"
+            ? navigate("/collection")
+            : navigate("/addcontainer");
         });
 
         console.log("email:", response.data.email);
