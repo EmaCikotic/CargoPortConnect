@@ -8,6 +8,15 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
 });
 
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("❌ SMTP connection error:", error);
+  } else {
+    console.log("✅ SMTP connection ready to send emails.");
+  }
+});
+
 exports.sendContainerConfirmation = async (
   toEmail,
   containerNumber,
@@ -64,17 +73,16 @@ exports.sendContainerConfirmation = async (
         },
       ],
     });
-    console.log(`Email sent to ${toEmail} with PDF attachment`);
+    console.log(`📧 Container email sent to ${toEmail}`);
   } catch (err) {
-    console.error("Error sending email:", err.message);
+    console.error("Error sending container email:", err.message);
   }
 };
 
 exports.sendContainerUpdated = async (
   toEmail,
   containerNumber,
-  details = {},
-  attachPdf = false
+  details = {}
 ) => {
   const {
     BL_number,
@@ -92,7 +100,6 @@ exports.sendContainerUpdated = async (
 
   const html = `
     <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
-   
       <h2 style="color:#5c146a;margin:0 0 10px">Your container was updated</h2>
       <p>The following details were updated on your container.</p>
       <table cellpadding="6" style="border-collapse:collapse;background:#fafafa;border:1px solid #eee">
@@ -111,14 +118,10 @@ exports.sendContainerUpdated = async (
         <tr><td><b>Status</b></td><td>${status ?? "-"}</td></tr>
       </table>
       <p style="color:#666;margin-top:10px">Thanks for using CargoPortConnect.</p>
-
-      <p>Best regards </br>
-      CargoPortConnectTeam</p>
-      
     </div>
   `;
 
-  const mail = {
+  await transporter.sendMail({
     from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
     to: toEmail,
     subject: `Container updated: ${containerNumber}`,
@@ -130,19 +133,7 @@ exports.sendContainerUpdated = async (
         contentType: "application/pdf",
       },
     ],
-  };
-
-  /**if (attachPdf) {
-    const pdfBuffer = await require("./PDFService").generateContainerPDF(
-      containerNumber,
-      details
-    );
-    mail.attachments = [
-      { filename: `${containerNumber}_updated.pdf`, content: pdfBuffer },
-    ];
-  }**/
-
-  await transporter.sendMail(mail);
+  });
 };
 
 exports.sendContainerDeleted = async (toEmail, containerNumber) => {
@@ -157,5 +148,75 @@ exports.sendContainerDeleted = async (toEmail, containerNumber) => {
         <p style="color:#666;margin-top:10px">If you didn't request this, please contact support.</p>
       </div>
     `,
+  });
+};
+
+// 📌 FIXED: Now uses reporter_email from request
+exports.sendReportConfirmation = async (
+  toEmail,
+  subject,
+  details,
+  attachments = []
+) => {
+  const html = `
+    <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+      <h2 style="color:#5c146a;margin:0 0 10px">We’ve received your report</h2>
+      <p>Thanks for contacting CargoPortConnect. We’ll review your message and reply soon.</p>
+      <h3>Report Summary</h3>
+      <p><b>Subject:</b> ${subject}</p>
+      <p><b>Details:</b></p>
+      <p>${details}</p>
+      <p style="color:#666;margin-top:10px">This is an automated message confirming receipt of your report.</p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
+    to: toEmail,
+    subject: `Report received: ${subject}`,
+    html,
+    attachments: attachments.map((f) => ({
+      filename: f.originalname,
+      path: f.path,
+    })),
+  });
+};
+
+exports.sendReportToAdmin = async (reportData, attachments = []) => {
+  const {
+    reporter_name: name,
+    reporter_email: email,
+    category,
+    priority,
+    containerNumber,
+    subject,
+    details,
+  } = reportData;
+
+  const html = `
+    <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+      <h2 style="color:#5c146a;margin:0 0 10px">New Report Submitted</h2>
+      <table cellpadding="6" style="border-collapse:collapse;background:#fafafa;border:1px solid #eee">
+        <tr><td><b>Name</b></td><td>${name || "-"}</td></tr>
+        <tr><td><b>Email</b></td><td>${email}</td></tr>
+        <tr><td><b>Category</b></td><td>${category}</td></tr>
+        <tr><td><b>Priority</b></td><td>${priority}</td></tr>
+        <tr><td><b>Container #</b></td><td>${containerNumber || "-"}</td></tr>
+        <tr><td><b>Subject</b></td><td>${subject}</td></tr>
+      </table>
+      <p><b>Details:</b></p>
+      <p>${details}</p>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
+    to: "cargoportconnect@gmail.com", // admin email fixed
+    subject: `📩 New Report: ${subject}`,
+    html,
+    attachments: attachments.map((f) => ({
+      filename: f.originalname,
+      path: f.path,
+    })),
   });
 };

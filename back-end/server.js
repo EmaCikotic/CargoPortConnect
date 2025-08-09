@@ -20,7 +20,7 @@ app.use(logger("dev"));
 
 app.use(
   cors({
-    origin: true, 
+    origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
@@ -34,11 +34,13 @@ app.use(express.static(path.join(__dirname, "public")));
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/userRoutes");
 const containersRouter = require("./routes/containerRoutes");
+const reportsRouter = require("./routes/reportRoutes");
 
 // Routes
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/containers", containersRouter);
+app.use("/api/reports", reportsRouter);
 
 // Error handling for unknown routes
 app.use((req, res, next) => {

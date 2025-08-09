@@ -237,12 +237,12 @@ exports.updateContainerById = async (req, res) => {
     (async () => {
       try {
         if (!uid) {
-          console.log("ℹ️ No user_id found for container", id);
+          console.log("ℹ No user_id found for container", id);
           return;
         }
         const user = await User.findUserById(uid);
         if (!user?.email) {
-          console.log("ℹ️ No email for user id", uid);
+          console.log("ℹ No email for user id", uid);
           return;
         }
 
@@ -286,7 +286,7 @@ exports.deleteContainerById = async (req, res) => {
 
     await Container.executeQuery("DELETE FROM Container WHERE id=?", [id]);
 
-    // fire-and-forget email
+    //email
     (async () => {
       try {
         if (existing?.user_id) {

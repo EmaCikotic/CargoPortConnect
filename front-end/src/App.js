@@ -17,6 +17,7 @@ import AddContainer from "./Components/AddContainer/AddContainer";
 import Collection from "./Components/Collection/Collection";
 import ContainerDetails from "./Components/ContainerDetails/ContainerDetails";
 import EditContainer from "./Components/EditContainer/EditContainer";
+import Report from "./Components/Report/Report";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/report" element={<Report />} />
           <Route path="/addContainer" element={<AddContainer />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/container/:id" element={<ContainerDetails />} />

@@ -2,7 +2,7 @@ const connection = require("../config/dcConn");
 
 const Container = {};
 
-// Add new container (adjusted for new DB schema)
+// Add new container 
 Container.addContainer = async (data) => {
   const {
     container_number,

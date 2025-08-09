@@ -12,8 +12,6 @@ const Header = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("user_id");
-    // If you store token, also remove it:
-    // localStorage.removeItem("token");
     setIsAuthenticated(false);
     navigate("/");
   };
@@ -75,6 +73,11 @@ const Header = () => {
           <li className="nav-item">
             <Link to="/services" className="nav-link">
               Services
+            </Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/report" className="nav-link">
+              Report
             </Link>
           </li>
         </ul>
