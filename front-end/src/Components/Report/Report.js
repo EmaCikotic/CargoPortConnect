@@ -207,7 +207,6 @@ const Report = () => {
                     value={form.category}
                     onChange={handleChange}
                   >
-                    <option value="wrong_data">Wrong container data</option>
                     <option value="technical">Technical issue</option>
                     <option value="feature">Feature request</option>
                     <option value="billing">Billing</option>

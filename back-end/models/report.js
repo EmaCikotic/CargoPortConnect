@@ -1,8 +1,10 @@
 const connection = require("../config/dcConn");
 
+const TABLE = "`Report`";
+
 const Report = {};
 
-// Add a new report
+// Create
 Report.addReport = async (data) => {
   const {
     user_id,
@@ -15,21 +17,14 @@ Report.addReport = async (data) => {
     has_attachment,
   } = data;
 
-  const insertSql = `
-    INSERT INTO Report (
-      user_id,
-      reporter_name,
-      reporter_email,
-      category,
-      priority,
-      subject,
-      details,
-      has_attachment
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  const sql = `
+    INSERT INTO ${TABLE} (
+      user_id, reporter_name, reporter_email,
+      category, priority, subject, details, has_attachment
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  const [result] = await connection.query(insertSql, [
+  const [result] = await connection.query(sql, [
     user_id || null,
     reporter_name || null,
     reporter_email,
@@ -43,46 +38,53 @@ Report.addReport = async (data) => {
   return result.insertId;
 };
 
-// Get all reports (for admin)
+// Read
 Report.getAllReports = async () => {
-  const query = "SELECT * FROM Report ORDER BY created_at DESC";
-  const [rows] = await connection.query(query);
+  // If you don't have created_at, change to: ORDER BY id DESC
+  const [rows] = await connection.query(
+    `SELECT * FROM ${TABLE} ORDER BY created_at DESC`
+  );
   return rows;
 };
 
-// Get reports by user ID
 Report.getReportsByUserId = async (userId) => {
-  const query =
-    "SELECT * FROM Report WHERE user_id = ? ORDER BY created_at DESC";
-  const [rows] = await connection.query(query, [userId]);
+  const [rows] = await connection.query(
+    `SELECT * FROM ${TABLE} WHERE user_id = ? ORDER BY created_at DESC`,
+    [userId]
+  );
   return rows;
 };
 
-// Get single report by ID
 Report.getReportById = async (id) => {
-  const query = "SELECT * FROM Report WHERE id = ?";
-  const [rows] = await connection.query(query, [id]);
-  return rows[0];
+  const [rows] = await connection.query(
+    `SELECT * FROM ${TABLE} WHERE id = ?`,
+    [id]
+  );
+  return rows[0] || null;
 };
 
-// Delete a report by ID
-Report.deleteReportById = async (id) => {
-  const query = "DELETE FROM Report WHERE id = ?";
-  const [result] = await connection.query(query, [id]);
-  return result.affectedRows > 0;
-};
-
-// Update report status
+// Update
 Report.updateReportStatus = async (id, status) => {
-  const query = "UPDATE Report SET status = ? WHERE id = ?";
-  const [result] = await connection.query(query, [status, id]);
+  const [result] = await connection.query(
+    `UPDATE ${TABLE} SET status = ? WHERE id = ?`,
+    [status, id]
+  );
   return result.affectedRows > 0;
 };
 
-// Reusable query executor
-Report.executeQuery = async (query, params) => {
-  const [rows] = await connection.query(query, params);
-  return [rows];
+// Delete
+Report.deleteReportById = async (id) => {
+  const [result] = await connection.query(
+    `DELETE FROM ${TABLE} WHERE id = ?`,
+    [id]
+  );
+  return result.affectedRows > 0;
+};
+
+// Generic executor — return raw result (rows for SELECT; header for writes)
+Report.executeQuery = async (query, params = []) => {
+  const [result] = await connection.query(query, params);
+  return result;
 };
 
 module.exports = Report;

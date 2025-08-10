@@ -1,5 +1,7 @@
+// back-end/services/emailService.js
 const nodemailer = require("nodemailer");
 const { generateContainerPDF } = require("./PDFService");
+const Notification = require("../models/notification");
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -8,19 +10,27 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
 });
 
-
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("❌ SMTP connection error:", error);
-  } else {
-    console.log("✅ SMTP connection ready to send emails.");
-  }
+transporter.verify((error) => {
+  if (error) console.error("❌ SMTP connection error:", error);
+  else console.log("✅ SMTP connection ready to send emails.");
 });
+
+// small helper to store a log row after a successful send
+async function logEmailNotification(meta = {}) {
+  try {
+    const { user_id, type, message } = meta;
+    if (!user_id || !type || !message) return;
+    await Notification.create(meta);
+  } catch (e) {
+    console.error("logEmailNotification failed:", e.message);
+  }
+}
 
 exports.sendContainerConfirmation = async (
   toEmail,
   containerNumber,
-  details = {}
+  details = {},
+  logMeta = {}
 ) => {
   const {
     BL_number,
@@ -41,12 +51,8 @@ exports.sendContainerConfirmation = async (
       <table cellpadding="6" style="border-collapse:collapse;background:#fafafa;border:1px solid #eee">
         <tr><td><b>Container</b></td><td>${containerNumber}</td></tr>
         <tr><td><b>B/L</b></td><td>${BL_number || "N/A"}</td></tr>
-        <tr><td><b>Ship</b></td><td>${ship_name || "-"} (${
-    ship_voyage || "-"
-  })</td></tr>
-        <tr><td><b>Route</b></td><td>${origin_port || "-"} → ${
-    destination_port || "-"
-  }</td></tr>
+        <tr><td><b>Ship</b></td><td>${ship_name || "-"} (${ship_voyage || "-"})</td></tr>
+        <tr><td><b>Route</b></td><td>${origin_port || "-"} → ${destination_port || "-"}</td></tr>
         <tr><td><b>ETD</b></td><td>${departure_date || "-"}</td></tr>
         <tr><td><b>ETA</b></td><td>${arrival_date || "-"}</td></tr>
         <tr><td><b>Consignee</b></td><td>${consignee || "-"}</td></tr>
@@ -59,21 +65,26 @@ exports.sendContainerConfirmation = async (
 
   try {
     const pdfBuffer = await generateContainerPDF(containerNumber, details);
-
     await transporter.sendMail({
       from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
       to: toEmail,
       subject: `Container ${containerNumber} Submission Confirmation`,
       html,
-      attachments: [
-        {
-          filename: `${containerNumber}_details.pdf`,
-          content: pdfBuffer,
-          contentType: "application/pdf",
-        },
-      ],
+      attachments: [{
+        filename: `${containerNumber}_details.pdf`,
+        content: pdfBuffer,
+        contentType: "application/pdf",
+      }],
     });
     console.log(`📧 Container email sent to ${toEmail}`);
+
+    await logEmailNotification({
+      user_id: logMeta.user_id || details.user_id,
+      container_id: logMeta.container_id ?? details.container_id ?? null,
+      type: "container_created",
+      message: `Email: Container ${containerNumber} submitted`,
+      method: "email",
+    });
   } catch (err) {
     console.error("Error sending container email:", err.message);
   }
@@ -82,7 +93,8 @@ exports.sendContainerConfirmation = async (
 exports.sendContainerUpdated = async (
   toEmail,
   containerNumber,
-  details = {}
+  details = {},
+  logMeta = {}
 ) => {
   const {
     BL_number,
@@ -96,6 +108,7 @@ exports.sendContainerUpdated = async (
     shipper,
     status,
   } = details;
+
   const pdfBuffer = await generateContainerPDF(containerNumber, details);
 
   const html = `
@@ -105,12 +118,8 @@ exports.sendContainerUpdated = async (
       <table cellpadding="6" style="border-collapse:collapse;background:#fafafa;border:1px solid #eee">
         <tr><td><b>Container</b></td><td>${containerNumber}</td></tr>
         <tr><td><b>B/L</b></td><td>${BL_number ?? "N/A"}</td></tr>
-        <tr><td><b>Ship</b></td><td>${ship_name ?? "-"} (${
-    ship_voyage ?? "-"
-  })</td></tr>
-        <tr><td><b>Route</b></td><td>${origin_port ?? "-"} → ${
-    destination_port ?? "-"
-  }</td></tr>
+        <tr><td><b>Ship</b></td><td>${ship_name ?? "-"} (${ship_voyage ?? "-"})</td></tr>
+        <tr><td><b>Route</b></td><td>${origin_port ?? "-"} → ${destination_port ?? "-"}</td></tr>
         <tr><td><b>ETD</b></td><td>${departure_date ?? "-"}</td></tr>
         <tr><td><b>ETA</b></td><td>${arrival_date ?? "-"}</td></tr>
         <tr><td><b>Consignee</b></td><td>${consignee ?? "-"}</td></tr>
@@ -126,17 +135,23 @@ exports.sendContainerUpdated = async (
     to: toEmail,
     subject: `Container updated: ${containerNumber}`,
     html,
-    attachments: [
-      {
-        filename: `${containerNumber}_details.pdf`,
-        content: pdfBuffer,
-        contentType: "application/pdf",
-      },
-    ],
+    attachments: [{
+      filename: `${containerNumber}_details.pdf`,
+      content: pdfBuffer,
+      contentType: "application/pdf",
+    }],
+  });
+
+  await logEmailNotification({
+    user_id: logMeta.user_id || details.user_id,
+    container_id: logMeta.container_id ?? details.container_id ?? null,
+    type: "container_updated",
+    message: `Email: Container ${containerNumber} updated`,
+    method: "email",
   });
 };
 
-exports.sendContainerDeleted = async (toEmail, containerNumber) => {
+exports.sendContainerDeleted = async (toEmail, containerNumber, logMeta = {}) => {
   await transporter.sendMail({
     from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
     to: toEmail,
@@ -149,15 +164,18 @@ exports.sendContainerDeleted = async (toEmail, containerNumber) => {
       </div>
     `,
   });
+
+  await logEmailNotification({
+    user_id: logMeta.user_id,
+    container_id: logMeta.container_id ?? null, // if you already deleted, pass null
+    type: "container_deleted",
+    message: `Email: Container ${containerNumber} deleted`,
+    method: "email",
+  });
 };
 
-// 📌 FIXED: Now uses reporter_email from request
-exports.sendReportConfirmation = async (
-  toEmail,
-  subject,
-  details,
-  attachments = []
-) => {
+// (optional) you can also log report confirmations with type 'report_submitted'
+exports.sendReportConfirmation = async (toEmail, subject, details, attachments = [], logMeta = {}) => {
   const html = `
     <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
       <h2 style="color:#5c146a;margin:0 0 10px">We’ve received your report</h2>
@@ -179,6 +197,14 @@ exports.sendReportConfirmation = async (
       filename: f.originalname,
       path: f.path,
     })),
+  });
+
+  await logEmailNotification({
+    user_id: logMeta.user_id || null,
+    container_id: null,
+    type: "report_submitted",
+    message: `Email: Report received · ${subject}`,
+    method: "email",
   });
 };
 
@@ -211,7 +237,7 @@ exports.sendReportToAdmin = async (reportData, attachments = []) => {
 
   await transporter.sendMail({
     from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
-    to: "cargoportconnect@gmail.com", // admin email fixed
+    to: "cargoportconnect@gmail.com",
     subject: `📩 New Report: ${subject}`,
     html,
     attachments: attachments.map((f) => ({

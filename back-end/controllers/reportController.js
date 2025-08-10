@@ -20,7 +20,7 @@ exports.addReport = async (req, res) => {
     details,
   } = req.body;
 
-  const hasAttachment = req.files && req.files.length > 0;
+  const hasAttachment = Array.isArray(req.files) && req.files.length > 0;
 
   if (!reporter_email || !subject || !details) {
     return res
@@ -47,17 +47,19 @@ exports.addReport = async (req, res) => {
       hasAttachment ? 1 : 0,
     ];
 
-    const [result] = await Report.executeQuery(insertSql, params);
+    
+    const result = await Report.executeQuery(insertSql, params);
+    const reportId = result.insertId;
 
     res.status(201).json({
       message: "Report submitted successfully",
-      reportId: result.insertId,
+      reportId,
     });
 
     // Fire-and-forget email sending
     (async () => {
       try {
-        await sendReportToAdmin(req.body, req.files || []);
+        await sendReportToAdmin({ ...req.body, reportId }, req.files || []);
         await sendReportConfirmation(
           reporter_email,
           subject,
@@ -77,10 +79,12 @@ exports.addReport = async (req, res) => {
 // GET /api/reports
 exports.getAllReports = async (_req, res) => {
   try {
-    const [rows] = await Report.executeQuery(
+    // ❗️DO NOT destructure – return value is already the rows array
+    const rows = await Report.executeQuery(
       "SELECT * FROM Report ORDER BY created_at DESC"
+      // If you don't have created_at, use: ORDER BY id DESC
     );
-    res.status(200).json(rows);
+    res.status(200).json(Array.isArray(rows) ? rows : []);
   } catch (err) {
     console.error("❌ Error fetching reports:", err.message);
     res.status(500).json({ message: "Error fetching reports." });
@@ -90,11 +94,13 @@ exports.getAllReports = async (_req, res) => {
 // GET /api/reports/user/:userId
 exports.getReportsByUserId = async (req, res) => {
   try {
-    const [rows] = await Report.executeQuery(
+    // ❗️DO NOT destructure – return value is already the rows array
+    const rows = await Report.executeQuery(
       "SELECT * FROM Report WHERE user_id = ? ORDER BY created_at DESC",
       [req.params.userId]
+      // If you don't have created_at, use: ORDER BY id DESC
     );
-    res.status(200).json(rows);
+    res.status(200).json(Array.isArray(rows) ? rows : []);
   } catch (err) {
     console.error("❌ Error fetching user reports:", err.message);
     res.status(500).json({ message: "Error fetching user reports." });
