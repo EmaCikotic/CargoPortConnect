@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import styles from "./Home.module.css";
-import background from "./background.jpg"; // your image
+
+import background from "./background.jpg";
 import CEO from "./CEO.jpg";
 import CTO from "./CTO.jpg";
 import COO from "./COO.jpg";
@@ -13,309 +14,216 @@ import socialMedia from "./socialmedia.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [showContent, setShowContent] = useState(false);
-
-  useEffect(() => {
-    setShowContent(true);
-  }, []);
 
   return (
-    <div className="container-fluid mb-3">
-      {/* Welcome Section with Background Image */}
-      <div
-        className={`row justify-content-center ${styles.welcomeContainer}`}
-        style={{
-          backgroundImage: `url(${background})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <div
-          className={`col-md-6 d-flex flex-column justify-content-center ${styles.slideInContent}`}
-        >
-          <h1 className="display-4 font-weight-bold text-center fw-bold">
-            CargoPortConnect
+    <main>
+      {/* HERO */}
+      <section className={styles.hero}>
+        <img src={background} alt="" className={styles.heroImg} />
+        <div className={styles.overlay} />
+        <div className={`container ${styles.heroInner}`}>
+          <p className={styles.kicker}>CargoPortConnect</p>
+          <h1 className={styles.title}>
+            Streamlining shipping. Empowering efficiency.
           </h1>
-          <p className={`lead mb-4 text-center ${styles.slideInContentright}`}>
-            <strong>Streamlining Shipping, Empowering Efficiency.</strong>
+          <p className={styles.lead}>
+            We’re modernizing container management for the global shipping and
+            logistics industry—clear status, fewer clicks, faster operations.
           </p>
-          <p className="text-muted mb-4">
-            At CargoPortConnect, we are committed to revolutionizing container
-            management and enhancing operational efficiency for the global
-            shipping and logistics industry.
-          </p>
-          <div className="d-flex gap-3 justify-content-center">
-            <a
-              href="/aboutus"
-              className="btn btn-primary p-2 justify-content-center"
+
+          <div className={styles.ctaRow}>
+            <button
+              type="button"
+              className={styles.btnPrimary}
+              onClick={() => navigate("/aboutus")}
             >
-              Learn More
-            </a>
+              Learn more
+            </button>
             <a
-              href="mailto:contact@cargoportconnect.com"
-              className={`btn btn-secondary p-2 ${styles.contact}`}
+              href="mailto:cargoportconnect@gmail.com"
+              className={styles.btnSecondary}
             >
-              Contact Us
+              Contact us
             </a>
           </div>
         </div>
-      </div>
+        <div className={styles.fade} />
+      </section>
 
-      <hr />
+      {/* VALUES */}
+      <section className={styles.section}>
+        <div className="container">
+          <h2 className={styles.sectionTitle}>Our Values</h2>
 
-      {/* Values Section */}
-      <div className="row m-3">
-        <div className="col-12 text-center">
-          <h2 className="display-5 mb-4 fw-bold">Our Values</h2>
-        </div>
-        <div className="d-flex">
-          <div className="col-md-4 text-center">
-            <h3 className="text-danger fw-bold">Integrity</h3>
-            <p className="text-muted">
-              We uphold the highest standards of integrity in all our actions.
-            </p>
-          </div>
-          <div className="col-md-4 text-center">
-            <h3 className="text-danger fw-bold">Innovation</h3>
-            <p className="text-muted">
-              We innovate to provide better solutions for our clients.
-            </p>
-          </div>
-          <div className="col-md-4 text-center">
-            <h3 className="text-danger fw-bold">Customer Focus</h3>
-            <p className="text-muted">
-              Our customers are at the center of everything we do.
-            </p>
-          </div>
-        </div>
-      </div>
-      <hr />
+          <div className={styles.values}>
+            <article className={styles.valueCard}>
+              <div className={styles.valueIcon}>🧭</div>
+              <h3>Integrity</h3>
+              <p>We hold a high bar for ethics, clarity and accountability.</p>
+            </article>
 
-      {/* Client Reviews Section */}
-      <div className="row mt-5 d-flex justify-content-center">
-        <div className="col-12 text-center">
-          <h2 className="display-5 mb-4 fw-bold">Client Reviews</h2>
-        </div>
-        <div className="col-md-4 mb-4">
-          <div className="card text-white bg-secondary border-secondary">
-            <div className="card-body">
-              <h5 className="card-title fw-bold">John Doe</h5>
-              <h6 className="card-subtitle mb-2 text-muted">
-                CEO, ExampleCorp
-              </h6>
-              <p className="card-text">
-                "Excellent communication, easy payment process, prompt updates
-                through the delivery process. I will not think twice about using
-                them again. They made us look like heroes to our customer."
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-4 mb-4">
-          <div className="card text-white bg-success border-sucess">
-            <div className="card-body">
-              <h5 className="card-title fw-bold">Jane Smith</h5>
-              <h6 className="card-subtitle mb-2 text-muted">
-                Logistics Manager, ShipItFast
-              </h6>
-              <p className="card-text">
-                "I wanted to take a moment to personally thank you and your team
-                for the exceptional service provided in handling our recent
-                order from Tampa to Visalia at such short notice. Your company
-                exceeded our expectations by delivering the order ahead of
-                schedule, which made a significant difference for us. Your
-                dedication and professionalism are greatly appreciated, and we
-                look forward to continuing our partnership with your company in
-                the future. Thank you once again for your outstanding support."
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="col-md-4 mb-4">
-          <div className="card text-white bg-info border-info">
-            <div className="card-body">
-              <h5 className="card-title fw-bold">Mike Johnson</h5>
-              <h6 className="card-subtitle mb-2 text-muted">
-                Operations Director, GlobalFreight
-              </h6>
-              <p className="card-text">
-                "I wish I could give 100 Stars. I had an outstanding experience
-                with Mr.Carol Davis and CargoPortConnect. I cannot remember the
-                last time I was so impressed with such a swift and smooth
-                transaction."
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <hr />
+            <article className={styles.valueCard}>
+              <div className={styles.valueIcon}>⚙️</div>
+              <h3>Innovation</h3>
+              <p>We keep reducing friction with smart, practical solutions.</p>
+            </article>
 
-      {/* Team Section */}
-      <div className="row mt-5 justify-content-center">
-        <div className="col-12 text-center">
-          <h2 className="display-5 mb-4 fw-bold">Meet Our Team</h2>
-        </div>
-        <div className="col-md-4 mb-4 text-center">
-          <img
-            src={CEO}
-            className={`img-fluid rounded-circle ${styles.teamImage}`}
-            alt="CEO"
-          />
-          <blockquote className="blockquote mt-3">
-            <p>
-              "As the CEO, I lead our team with over 20 years of experience in
-              the logistics industry."
-            </p>
-            <footer className="blockquote-footer">Alice Brown</footer>
-          </blockquote>
-        </div>
-        <div className="d-flex">
-          <div className="col-md-4 mb-4 text-center">
-            <img
-              src={CTO}
-              className={`img-fluid rounded-circle ${styles.teamImage}`}
-              alt="CTO"
-            />
-            <blockquote className="blockquote mt-3">
-              <p>
-                "As the CTO, I'm responsible for our technology strategy and
-                implementation."
-              </p>
-              <footer className="blockquote-footer">Bob Carter</footer>
-            </blockquote>
-          </div>
-          <div className="col-md-4 mb-4 text-center">
-            <img
-              src={COO}
-              className={`img-fluid rounded-circle ${styles.teamImage}`}
-              alt="COO"
-            />
-            <blockquote className="blockquote mt-3">
-              <p>
-                "As the COO, I oversee our daily operations to ensure everything
-                runs smoothly."
-              </p>
-              <footer className="blockquote-footer">Carol Davis</footer>
-            </blockquote>
-          </div>
-          <div className="col-md-4 mb-4 text-center">
-            <img
-              src={marketing}
-              className={`img-fluid rounded-circle ${styles.teamImage}`}
-              alt="Marketing Director"
-            />
-            <blockquote className="blockquote mt-3">
-              <p>
-                "As the Marketing Director, I handle all our marketing campaigns
-                and brand strategy."
-              </p>
-              <footer className="blockquote-footer">David Evans</footer>
-            </blockquote>
+            <article className={styles.valueCard}>
+              <div className={styles.valueIcon}>🤝</div>
+              <h3>Customer focus</h3>
+              <p>We make decisions by asking: does this help our users?</p>
+            </article>
           </div>
         </div>
-        <div className="d-flex">
-          <div className="col-md-4 mb-4 text-center">
-            <img
-              src={HR}
-              className={`img-fluid rounded-circle ${styles.teamImage}`}
-              alt="HR Manager"
-            />
-            <blockquote className="blockquote mt-3">
-              <p>
-                "As the HR Manager, I ensure we attract and retain the best
-                talent."
-              </p>
-              <footer className="blockquote-footer">Eva Foster</footer>
-            </blockquote>
-          </div>
-          <div className="col-md-4 mb-4 text-center">
-            <img
-              src={finance}
-              className={`img-fluid rounded-circle ${styles.teamImage}`}
-              alt="Finance Director"
-            />
-            <blockquote className="blockquote mt-3">
-              <p>
-                "As the Finance Director, I oversee our financial planning and
-                budgeting."
-              </p>
-              <footer className="blockquote-footer">Frank Green</footer>
-            </blockquote>
-          </div>
-          <div className="col-md-4 mb-4 text-center">
-            <img
-              src={socialMedia}
-              className={`img-fluid rounded-circle ${styles.teamImage}`}
-              alt="Social Media Manager"
-            />
-            <blockquote className="blockquote mt-3">
-              <p>
-                "As the Social Media Manager, I create and manage content across
-                our social platforms to engage our community."
-              </p>
-              <footer className="blockquote-footer">Grace Hall</footer>
-            </blockquote>
-          </div>
-        </div>
-      </div>
-      <hr />
+      </section>
 
-      {/* Open Positions Section */}
-      <div className="container mt-5">
-        <div className="text-center col-7 mx-auto">
-          <h2 className="font-weight-bold ">Open Positions</h2>
-          <p>
-            We’re expanding our team, hiring people who are excited to build
-            modern apps used by millions of users.
+      {/* REVIEWS */}
+      <section className={styles.sectionAlt}>
+        <div className="container">
+          <h2 className={styles.sectionTitle}>What customers say</h2>
+
+          <div className={styles.reviews}>
+            <article className={`${styles.reviewCard} ${styles.r1}`}>
+              <div className={styles.stars} aria-label="5 out of 5 stars">
+                ★★★★★
+              </div>
+              <h5 className="mb-1">Eva Müller</h5>
+              <small className={styles.dim}>
+                Operations Manager, North Sea Importers
+              </small>
+              <p className="mt-3 mb-2">
+                “We moved tracking from spreadsheets to CargoPortConnect.
+                ETD/ETA updates and the PDF confirmations keep our sales and
+                warehouse in sync. Zero ‘where is it?’ emails this quarter.”
+              </p>
+              <div className={styles.result}>
+                ↗ 40% fewer status emails internally
+              </div>
+            </article>
+
+            <article className={`${styles.reviewCard} ${styles.r2}`}>
+              <div className={styles.stars} aria-label="5 out of 5 stars">
+                ★★★★★
+              </div>
+              <h5 className="mb-1">Rahul Menon</h5>
+              <small className={styles.dim}>
+                Head of Logistics, Asia-Europe Traders
+              </small>
+              <p className="mt-3 mb-2">
+                “Adding containers takes under a minute, and customers get
+                automatic emails with a clean PDF. The report/complaint form
+                with attachments cut our back-and-forth dramatically.”
+              </p>
+              <div className={styles.result}>↘ 35% fewer support tickets</div>
+            </article>
+
+            <article className={`${styles.reviewCard} ${styles.r3}`}>
+              <div className={styles.stars} aria-label="5 out of 5 stars">
+                ★★★★★
+              </div>
+              <h5 className="mb-1">Sofía Pérez</h5>
+              <small className={styles.dim}>COO, HarborLink Logistics</small>
+              <p className="mt-3 mb-2">
+                “The team loves the clear timeline and the voyage/port fields.
+                Updating a container triggers the right email—no missed calls,
+                no surprises.”
+              </p>
+              <div className={styles.result}>
+                ✔ On-time info to 100% of consignees
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* TEAM */}
+      <section className={styles.section}>
+        <div className="container">
+          <h2 className={styles.sectionTitle}>Meet Our Team</h2>
+
+          <div className={styles.team}>
+            {[
+              { img: CEO, name: "Alice Brown", role: "CEO" },
+              { img: CTO, name: "Bob Carter", role: "CTO" },
+              { img: COO, name: "Carol Davis", role: "COO" },
+              {
+                img: marketing,
+                name: "David Evans",
+                role: "Marketing Director",
+              },
+              { img: HR, name: "Eva Foster", role: "HR Manager" },
+              { img: finance, name: "Frank Green", role: "Finance Director" },
+              {
+                img: socialMedia,
+                name: "Grace Hall",
+                role: "Social Media Manager",
+              },
+            ].map((m) => (
+              <article key={m.name} className={styles.person}>
+                <img src={m.img} alt={m.name} className={styles.teamImg} />
+                <div className="mt-3">
+                  <div className={styles.personName}>{m.name}</div>
+                  <div className={styles.personRole}>{m.role}</div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* OPEN POSITIONS */}
+      <section className={styles.sectionAlt}>
+        <div className="container">
+          <h2 className={styles.sectionTitle}>Open Positions</h2>
+          <p className={styles.sectionIntro}>
+            We’re hiring people who love building polished, modern tools used by
+            thousands of operators.
           </p>
-        </div>
 
-        <div className="alert alert-primary text-center col-7 mx-auto">
-          Positions are available in Ljubljana and Koper as onsite, hybrid, or
-          remote.
-        </div>
+          <div className={styles.notice}>
+            Positions are available in Ljubljana and Koper as onsite, hybrid, or
+            remote.
+          </div>
 
-        <div className="list-group cursor-pointer col-7 mx-auto">
-          <div
-            className="list-group-item d-flex justify-content-between align-items-center"
-            onClick={() => navigate("/openPositions/backendEngineer")}
-          >
-            <div>
-              <h5 className="mb-1">Backend Engineer (PHP)</h5>
-              <small>Own backends and APIs</small>
-            </div>
-            <div>
-              <i className="fa-solid fa-arrow-right"></i>
-            </div>
-          </div>
-          <div
-            className="list-group-item d-flex justify-content-between align-items-center"
-            onClick={() => navigate("/openPositions/LogisticsCoordinator")}
-          >
-            <div>
-              <h5 className="mb-1">Logistics Coordinator</h5>
-              <small>Manage shipper-client relationships</small>
-            </div>
-            <div>
-              <i className="fa-solid fa-arrow-right"></i>
-            </div>
-          </div>
-          <div
-            className="list-group-item d-flex justify-content-between align-items-center"
-            onClick={() => navigate("/openPositions/MarketingManager")}
-          >
-            <div>
-              <h5 className="mb-1">Marketing Manager</h5>
-              <small>Own marketing strategy</small>
-            </div>
-            <div>
-              <i className="fa-solid fa-arrow-right"></i>
-            </div>
+          <div className={styles.jobs}>
+            <button
+              className={styles.job}
+              onClick={() => navigate("/openPositions/backendEngineer")}
+            >
+              <div>
+                <div className={styles.jobTitle}>Backend Engineer (PHP)</div>
+                <div className={styles.jobNote}>Own backends and APIs</div>
+              </div>
+              <span className={styles.chev}>›</span>
+            </button>
+
+            <button
+              className={styles.job}
+              onClick={() => navigate("/openPositions/LogisticsCoordinator")}
+            >
+              <div>
+                <div className={styles.jobTitle}>Logistics Coordinator</div>
+                <div className={styles.jobNote}>
+                  Manage shipper–client relationships
+                </div>
+              </div>
+              <span className={styles.chev}>›</span>
+            </button>
+
+            <button
+              className={styles.job}
+              onClick={() => navigate("/openPositions/MarketingManager")}
+            >
+              <div>
+                <div className={styles.jobTitle}>Marketing Manager</div>
+                <div className={styles.jobNote}>Own marketing strategy</div>
+              </div>
+              <span className={styles.chev}>›</span>
+            </button>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
