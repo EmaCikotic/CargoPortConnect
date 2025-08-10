@@ -3,11 +3,6 @@ const connection = require("../config/dcConn");
 
 const Notification = {};
 
-/**
- * Save "we sent an email" notification.
- * type: 'container_created' | 'container_updated' | 'container_deleted' | 'report_submitted'
- * method: always 'email' for now
- */
 Notification.create = async ({
   user_id,
   container_id = null,
