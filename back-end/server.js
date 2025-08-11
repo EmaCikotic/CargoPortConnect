@@ -22,7 +22,7 @@ app.use(
   cors({
     origin: true,
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   })
 );
 //app.use(cors({ origin: "http://localhost:3001", credentials: true }));
@@ -35,12 +35,14 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/userRoutes");
 const containersRouter = require("./routes/containerRoutes");
 const reportsRouter = require("./routes/reportRoutes");
+const penaltiesRouter = require("./routes/penaltyRoutes");
 
 // Routes
 app.use("/", indexRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/containers", containersRouter);
 app.use("/api/reports", reportsRouter);
+app.use("/api/penalties", penaltiesRouter);
 
 // Error handling for unknown routes
 app.use((req, res, next) => {

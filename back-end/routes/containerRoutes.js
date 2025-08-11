@@ -9,5 +9,6 @@ router.get("/", containerController.getAllContainers);
 router.get("/container/:id", containerController.getContainerById);
 router.delete("/container/:id", containerController.deleteContainerById);
 router.put("/container/:id", containerController.updateContainerById);
+router.patch("/:id/status", containerController.updateContainerStatus);
 
 module.exports = router;

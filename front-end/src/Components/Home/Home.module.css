@@ -1,22 +1,22 @@
-:root{
+:root {
   /* Layout */
-  --navH: 72px;              /* navbar height (adjust if yours differs) */
+  --navH: 72px; /* navbar height (adjust if yours differs) */
   --radius: 16px;
-  --shadow: 0 8px 28px rgba(10,20,32,.12);
+  --shadow: 0 8px 28px rgba(10, 20, 32, 0.12);
 
   /* Brand palette */
-  --brand: #0E5A8A;          /* primary */
-  --brand-600: #0B4A71;      /* hover/darker */
-  --ink: #0A1420;            /* headings */
-  --ink-2: #5B6470;          /* body text */
+  --brand: #0e5a8a; /* primary */
+  --brand-600: #0b4a71; /* hover/darker */
+  --ink: #0a1420; /* headings */
+  --ink-2: #5b6470; /* body text */
   --card: #ffffff;
-  --bg: #F4F7FB;             /* section bg */
+  --bg: #f4f7fb; /* section bg */
 }
 
 /* HERO */
 .hero {
   position: relative;
-  min-height: calc(100vh - var(--navH));  /* fills the screen under the navbar */
+  min-height: calc(100vh - var(--navH)); /* fills the screen under the navbar */
   display: grid;
   align-items: center;
   overflow: hidden;
@@ -29,13 +29,14 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* tweak focal point if needed */
   object-position: 60% 40%;
   filter: saturate(1.05);
 }
 
 @media (max-width: 768px) {
-  .heroImg { object-position: 50% 28%; }
+  .heroImg {
+    object-position: 50% 28%;
+  }
 }
 
 .overlay {
@@ -48,8 +49,8 @@
   position: absolute;
   inset-inline: 0;
   bottom: -1px;
-  height: 160px; /* tall enough so next section doesn't peek */
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, var(--bg) 90%);
+  height: 160px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, var(--bg) 90%);
 }
 
 .heroInner {
@@ -57,16 +58,16 @@
   color: #fff;
   max-width: 720px;
   padding-block: clamp(24px, 6vw, 64px);
-  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .kicker {
   margin: 0 0 6px 0;
   text-transform: uppercase;
-  letter-spacing: .12em;
+  letter-spacing: 0.12em;
   font-weight: 700;
   font-size: 12px;
-  opacity: .9;
+  opacity: 0.9;
 }
 
 .title {
@@ -98,22 +99,29 @@
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
-  transition: transform .08s ease, box-shadow .2s ease, background .2s ease, color .2s ease, border-color .2s ease;
+  transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease, border-color 0.2s ease;
 }
 
 .btnPrimary {
   background: var(--brand);
   color: #fff;
-  box-shadow: 0 6px 18px rgba(14, 90, 138, .28);
+  box-shadow: 0 6px 18px rgba(14, 90, 138, 0.28);
 }
-.btnPrimary:hover { background: var(--brand-600); transform: translateY(-1px); }
+.btnPrimary:hover {
+  background: var(--brand-600);
+  transform: translateY(-1px);
+}
 
 .btnSecondary {
   background: transparent;
-  border: 2px solid rgba(255,255,255,.9);
+  border: 2px solid rgba(255, 255, 255, 0.9);
   color: #fff;
 }
-.btnSecondary:hover { background: rgba(255,255,255,.92); color: var(--ink); }
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+}
 
 /* SECTIONS */
 .section {
@@ -150,7 +158,9 @@
 }
 
 @media (max-width: 992px) {
-  .values { grid-template-columns: 1fr; }
+  .values {
+    grid-template-columns: 1fr;
+  }
 }
 
 .valueCard {
@@ -165,8 +175,13 @@
   font-weight: 800;
   color: var(--ink);
 }
-.valueCard p { margin: 0; color: var(--ink-2); }
-.valueIcon { font-size: 28px; }
+.valueCard p {
+  margin: 0;
+  color: var(--ink-2);
+}
+.valueIcon {
+  font-size: 28px;
+}
 
 /* REVIEWS */
 .reviews {
@@ -176,7 +191,9 @@
 }
 
 @media (max-width: 992px) {
-  .reviews { grid-template-columns: 1fr; }
+  .reviews {
+    grid-template-columns: 1fr;
+  }
 }
 
 .reviewCard {
@@ -186,13 +203,23 @@
   box-shadow: var(--shadow);
   min-height: 170px;
 }
-.reviewCard h5 { font-weight: 800; }
-.dim { opacity: .9; }
+.reviewCard h5 {
+  font-weight: 800;
+}
+.dim {
+  opacity: 0.9;
+}
 
 /* Gradients tuned to the brand blues/greens */
-.r1 { background: linear-gradient(135deg, #0d3a63, #165a86); }
-.r2 { background: linear-gradient(135deg, #146a39, #238d57); }
-.r3 { background: linear-gradient(135deg, #0E5A8A, #1b7fb6); }
+.r1 {
+  background: linear-gradient(135deg, #0d3a63, #165a86);
+}
+.r2 {
+  background: linear-gradient(135deg, #146a39, #238d57);
+}
+.r3 {
+  background: linear-gradient(135deg, #0e5a8a, #1b7fb6);
+}
 
 /* TEAM */
 .team {
@@ -201,10 +228,14 @@
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 @media (max-width: 1200px) {
-  .team { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .team {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 @media (max-width: 768px) {
-  .team { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .team {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .person {
@@ -220,16 +251,22 @@
   height: 110px;
   object-fit: cover;
   border-radius: 50%;
-  box-shadow: 0 6px 18px rgba(16,17,20,.12);
+  box-shadow: 0 6px 18px rgba(16, 17, 20, 0.12);
 }
 
-.personName { font-weight: 800; color: var(--ink); }
-.personRole  { color: var(--ink-2); font-size: 14px; }
+.personName {
+  font-weight: 800;
+  color: var(--ink);
+}
+.personRole {
+  color: var(--ink-2);
+  font-size: 14px;
+}
 
 /* JOBS */
 .notice {
-  background: rgba(14,90,138,.08);
-  border: 1px solid rgba(14,90,138,.18);
+  background: rgba(14, 90, 138, 0.08);
+  border: 1px solid rgba(14, 90, 138, 0.18);
   color: var(--brand-600);
   padding: 12px 16px;
   border-radius: 12px;
@@ -255,13 +292,23 @@
   padding: 14px 16px;
   cursor: pointer;
   text-align: left;
-  transition: transform .06s ease, box-shadow .2s ease, border-color .2s ease;
+  transition: transform 0.06s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .job:hover {
   transform: translateY(-1px);
   border-color: #e4e7ee;
   box-shadow: var(--shadow);
 }
-.jobTitle { font-weight: 800; color: var(--ink); }
-.jobNote  { color: var(--ink-2); font-size: 14px; }
-.chev { font-size: 26px; line-height: 1; color: var(--ink-2); }
+.jobTitle {
+  font-weight: 800;
+  color: var(--ink);
+}
+.jobNote {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.chev {
+  font-size: 26px;
+  line-height: 1;
+  color: var(--ink-2);
+}

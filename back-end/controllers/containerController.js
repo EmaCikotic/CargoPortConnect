@@ -1,3 +1,4 @@
+// back-end/controllers/containerController.js
 const Container = require("../models/containers");
 const User = require("../models/users");
 const {
@@ -27,7 +28,6 @@ function validateEtdEtaStrict(departure_date, arrival_date) {
     throw err;
   }
 
-  // Strict rule: ETD must be before ETA (no same-day)
   if (etd >= eta) {
     const err = new Error("ETD (departure) must be before ETA (arrival).");
     err.statusCode = 400;
@@ -55,7 +55,6 @@ exports.addContainer = async (req, res) => {
   } = req.body;
 
   try {
-    // Required fields
     const required = [
       "container_number",
       "arrival_date",
@@ -77,61 +76,38 @@ exports.addContainer = async (req, res) => {
       }
     }
 
-    // Validate ETD/ETA
     validateEtdEtaStrict(departure_date, arrival_date);
 
     const insertSql = `
       INSERT INTO Container (
-        container_number,
-        arrival_date,
-        departure_date,
-        ship_name,
-        ship_voyage,
-        BL_number,
-        consignee,
-        shipper,
-        origin_port,
-        destination_port,
-        status,
-        user_id
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        container_number, arrival_date, departure_date, ship_name, ship_voyage,
+        BL_number, consignee, shipper, origin_port, destination_port, status, user_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const params = [
-      container_number,
-      arrival_date,
-      departure_date,
-      ship_name,
-      ship_voyage,
-      BL_number,
-      consignee,
-      shipper,
-      origin_port,
-      destination_port,
-      status || "expected",
-      user_id,
+      container_number, arrival_date, departure_date, ship_name, ship_voyage,
+      BL_number, consignee, shipper, origin_port, destination_port, status || "expected", user_id,
     ];
 
     const [result] = await Container.executeQuery(insertSql, params);
 
-    // Fire-and-forget email
+    // Fire-and-forget email + log
     (async () => {
       try {
         const user = await User.findUserById(user_id);
         if (user?.email) {
-          await sendContainerConfirmation(user.email, container_number, {
-            BL_number,
-            ship_name,
-            ship_voyage,
-            origin_port,
-            destination_port,
-            departure_date,
-            arrival_date,
-            consignee,
-            shipper,
-            status: status || "expected",
-          });
+          await sendContainerConfirmation(
+            user.email,
+            container_number,
+            {
+              BL_number, ship_name, ship_voyage, origin_port, destination_port,
+              departure_date, arrival_date, consignee, shipper, status: status || "expected",
+              user_id,
+              container_id: result.insertId,
+            },
+            { user_id, container_id: result.insertId } // 👈 ensure Notification row
+          );
         }
       } catch (e) {
         console.error("Post-insert email failed:", e.message);
@@ -242,7 +218,6 @@ exports.updateContainerById = async (req, res) => {
   } = req.body;
 
   try {
-    // Validate ETD/ETA if both provided (allows partial edits otherwise)
     if (arrival_date && departure_date) {
       validateEtdEtaStrict(departure_date, arrival_date);
     }
@@ -270,7 +245,7 @@ exports.updateContainerById = async (req, res) => {
       id,
     ]);
 
-    // Pull user/email fresh and send notification
+    // Pull user/email and notify + log
     const [rows] = await Container.executeQuery(
       "SELECT user_id, container_number FROM Container WHERE id=?",
       [id]
@@ -284,18 +259,23 @@ exports.updateContainerById = async (req, res) => {
         const user = await User.findUserById(uid);
         if (!user?.email) return;
 
-        await sendContainerUpdated(user.email, cnum, {
-          BL_number,
-          ship_name,
-          ship_voyage,
-          origin_port,
-          destination_port,
-          departure_date,
-          arrival_date,
-          consignee,
-          shipper,
-          status,
-        });
+        await sendContainerUpdated(
+          user.email,
+          cnum,
+          {
+            BL_number,
+            ship_name,
+            ship_voyage,
+            origin_port,
+            destination_port,
+            departure_date,
+            arrival_date,
+            consignee,
+            shipper,
+            status,
+          },
+          { user_id: uid, container_id: id } // 👈 ensure Notification row
+        );
       } catch (e) {
         console.error("Post-update email failed:", e.message);
       }
@@ -327,7 +307,11 @@ exports.deleteContainerById = async (req, res) => {
         if (!existing?.user_id) return;
         const user = await User.findUserById(existing.user_id);
         if (!user?.email) return;
-        await sendContainerDeleted(user.email, existing.container_number);
+        await sendContainerDeleted(
+          user.email,
+          existing.container_number,
+          { user_id: existing.user_id, container_id: null } // 👈 log row
+        );
       } catch (e) {
         console.error("Post-delete email failed:", e.message);
       }
@@ -337,5 +321,53 @@ exports.deleteContainerById = async (req, res) => {
   } catch (err) {
     console.error("Error deleting container:", err.message);
     return res.status(500).json({ message: "Error deleting container." });
+  }
+};
+
+// PATCH /api/containers/:id/status
+exports.updateContainerStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    if (!status) {
+      const err = new Error("status is required.");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    await Container.executeQuery(
+      "UPDATE Container SET status = ? WHERE id = ?",
+      [status, id]
+    );
+
+    try {
+      const [rows] = await Container.executeQuery(
+        "SELECT user_id, container_number FROM Container WHERE id=?",
+        [id]
+      );
+      const uid = rows?.[0]?.user_id;
+      const cnum = rows?.[0]?.container_number;
+      if (uid && cnum) {
+        const user = await User.findUserById(uid);
+        if (user?.email) {
+          await sendContainerUpdated(
+            user.email,
+            cnum,
+            { status },
+            { user_id: uid, container_id: id } // 👈 log row
+          );
+        }
+      }
+    } catch (e) {
+      console.error("Post-status-update email failed:", e.message);
+    }
+
+    return res.status(200).json({ message: "Status updated successfully." });
+  } catch (err) {
+    console.error("Error updating status:", err.message);
+    return res
+      .status(err.statusCode || 500)
+      .json({ message: err.message || "Error updating status." });
   }
 };
