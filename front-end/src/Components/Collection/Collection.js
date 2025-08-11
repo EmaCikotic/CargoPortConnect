@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 import { API_URL } from "../../Configuration";
 import { useNavigate } from "react-router-dom";
 
@@ -62,7 +63,6 @@ const Collection = () => {
 
   useEffect(() => {
     fetchUserContainers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleRefreshClick = () => {

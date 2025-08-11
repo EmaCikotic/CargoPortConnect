@@ -80,6 +80,17 @@ const Header = () => {
               Report
             </Link>
           </li>
+
+          <li className="nav-item">
+            <Link
+              to="/PriceList.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nav-link"
+            >
+              Price List
+            </Link>
+          </li>
         </ul>
       </div>
     </nav>

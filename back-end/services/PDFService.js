@@ -28,7 +28,7 @@ exports.generateContainerPDF = (containerNumber, details = {}) => {
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
 
-    // --- HEADER ---
+    
     doc
       .fontSize(24)
       .font("Helvetica-Bold")

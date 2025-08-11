@@ -78,8 +78,12 @@ exports.sendContainerConfirmation = async (
       <table cellpadding="6" style="border-collapse:collapse;background:#fafafa;border:1px solid #eee">
         <tr><td><b>Container</b></td><td>${containerNumber}</td></tr>
         <tr><td><b>B/L</b></td><td>${BL_number || "N/A"}</td></tr>
-        <tr><td><b>Ship</b></td><td>${ship_name || "-"} (${ship_voyage || "-"})</td></tr>
-        <tr><td><b>Route</b></td><td>${origin_port || "-"} → ${destination_port || "-"}</td></tr>
+        <tr><td><b>Ship</b></td><td>${ship_name || "-"} (${
+    ship_voyage || "-"
+  })</td></tr>
+        <tr><td><b>Route</b></td><td>${origin_port || "-"} → ${
+    destination_port || "-"
+  }</td></tr>
         <tr><td><b>ETD</b></td><td>${departure_date || "-"}</td></tr>
         <tr><td><b>ETA</b></td><td>${arrival_date || "-"}</td></tr>
         <tr><td><b>Consignee</b></td><td>${consignee || "-"}</td></tr>
@@ -108,8 +112,7 @@ exports.sendContainerConfirmation = async (
 
     await logEmailNotification({
       user_id: logMeta.user_id || details.user_id || null,
-      container_id:
-        logMeta.container_id ?? details.container_id ?? null,
+      container_id: logMeta.container_id ?? details.container_id ?? null,
       type: "container_created",
       message: `Email: Container ${containerNumber} submitted`,
       method: "email",
@@ -152,8 +155,12 @@ exports.sendContainerUpdated = async (
           <table cellpadding="6" style="border-collapse:collapse;background:#fafafa;border:1px solid #eee">
             <tr><td><b>Container</b></td><td>${containerNumber}</td></tr>
             <tr><td><b>B/L</b></td><td>${BL_number ?? "N/A"}</td></tr>
-            <tr><td><b>Ship</b></td><td>${ship_name ?? "-"} (${ship_voyage ?? "-"})</td></tr>
-            <tr><td><b>Route</b></td><td>${origin_port ?? "-"} → ${destination_port ?? "-"}</td></tr>
+            <tr><td><b>Ship</b></td><td>${ship_name ?? "-"} (${
+        ship_voyage ?? "-"
+      })</td></tr>
+            <tr><td><b>Route</b></td><td>${origin_port ?? "-"} → ${
+        destination_port ?? "-"
+      }</td></tr>
             <tr><td><b>ETD</b></td><td>${departure_date ?? "-"}</td></tr>
             <tr><td><b>ETA</b></td><td>${arrival_date ?? "-"}</td></tr>
             <tr><td><b>Consignee</b></td><td>${consignee ?? "-"}</td></tr>
@@ -173,8 +180,7 @@ exports.sendContainerUpdated = async (
 
     await logEmailNotification({
       user_id: logMeta.user_id || details.user_id || null,
-      container_id:
-        logMeta.container_id ?? details.container_id ?? null,
+      container_id: logMeta.container_id ?? details.container_id ?? null,
       type: "container_updated",
       message: `Email: Container ${containerNumber} updated`,
       method: "email",
@@ -279,7 +285,9 @@ exports.sendReportToAdmin = async (reportData, attachments = []) => {
             <tr><td><b>Email</b></td><td>${email}</td></tr>
             <tr><td><b>Category</b></td><td>${category}</td></tr>
             <tr><td><b>Priority</b></td><td>${priority}</td></tr>
-            <tr><td><b>Container #</b></td><td>${containerNumber || "-"}</td></tr>
+            <tr><td><b>Container #</b></td><td>${
+              containerNumber || "-"
+            }</td></tr>
             <tr><td><b>Subject</b></td><td>${subject}</td></tr>
           </table>
           <p><b>Details:</b></p>
@@ -305,25 +313,53 @@ exports.sendContainerStatusChanged = async (
   logMeta = {}
 ) => {
   const nice = (s) => String(s || "").replace(/_/g, " ");
-  const { BL_number, origin_port, destination_port, departure_date, arrival_date } = meta;
+  const {
+    BL_number,
+    origin_port,
+    destination_port,
+    departure_date,
+    arrival_date,
+  } = meta;
 
   try {
     await transporter.sendMail({
       from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
       to: toEmail,
-      subject: `Container ${containerNumber}: status changed to ${nice(newStatus)}`,
+      subject: `Container ${containerNumber}: status changed to ${nice(
+        newStatus
+      )}`,
       html: `
         <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
           <h2 style="color:#5c146a;margin:0 0 10px">Container status updated</h2>
           <p>The status of your container has changed.</p>
           <table cellpadding="6" style="border-collapse:collapse;background:#fafafa;border:1px solid #eee">
             <tr><td><b>Container</b></td><td>${containerNumber}</td></tr>
-            ${BL_number ? `<tr><td><b>B/L</b></td><td>${BL_number}</td></tr>` : ""}
+            ${
+              BL_number
+                ? `<tr><td><b>B/L</b></td><td>${BL_number}</td></tr>`
+                : ""
+            }
             <tr><td><b>Old status</b></td><td>${nice(oldStatus)}</td></tr>
-            <tr><td><b>New status</b></td><td><b>${nice(newStatus)}</b></td></tr>
-            ${origin_port || destination_port ? `<tr><td><b>Route</b></td><td>${origin_port || "-"} → ${destination_port || "-"}</td></tr>` : ""}
-            ${departure_date ? `<tr><td><b>ETD</b></td><td>${departure_date}</td></tr>` : ""}
-            ${arrival_date ? `<tr><td><b>ETA</b></td><td>${arrival_date}</td></tr>` : ""}
+            <tr><td><b>New status</b></td><td><b>${nice(
+              newStatus
+            )}</b></td></tr>
+            ${
+              origin_port || destination_port
+                ? `<tr><td><b>Route</b></td><td>${origin_port || "-"} → ${
+                    destination_port || "-"
+                  }</td></tr>`
+                : ""
+            }
+            ${
+              departure_date
+                ? `<tr><td><b>ETD</b></td><td>${departure_date}</td></tr>`
+                : ""
+            }
+            ${
+              arrival_date
+                ? `<tr><td><b>ETA</b></td><td>${arrival_date}</td></tr>`
+                : ""
+            }
           </table>
         </div>
       `,
@@ -333,10 +369,70 @@ exports.sendContainerStatusChanged = async (
       user_id: logMeta.user_id || meta.user_id || null,
       container_id: logMeta.container_id ?? meta.container_id ?? null,
       type: "status_changed",
-      message: `Email: Container ${containerNumber} status ${nice(oldStatus)} → ${nice(newStatus)}`,
+      message: `Email: Container ${containerNumber} status ${nice(
+        oldStatus
+      )} → ${nice(newStatus)}`,
       method: "email",
     });
   } catch (err) {
     console.error("Error sending status changed email:", err);
+  }
+};
+
+// --- Warning & Penalty emails ---
+exports.sendWarningEmail = async (
+  toEmail,
+  { reason, amount, containerNumber } = {},
+  logMeta = {}
+) => {
+  try {
+    await transporter.sendMail({
+      from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
+      to: toEmail,
+      subject: `Warning Issued `,
+      html: `
+        <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+          <h2 style="color:#cc6600;margin:0 0 10px">Account Warning</h2>
+          ${
+            containerNumber ? `<p><b>Container:</b> ${containerNumber}</p>` : ""
+          }
+          <p><b>Reason:</b> ${reason}</p>
+          ${amount != null ? `<p><b>Amount:</b> ${amount}</p>` : ""}
+          <p style="color:#666;margin-top:10px">Please address this to avoid further penalties.</p>
+        </div>
+      `,
+    });
+
+    
+  } catch (err) {
+    console.error("Error sending warning email:", err);
+  }
+};
+
+exports.sendPenaltyEmail = async (
+  toEmail,
+  { reason, amount, containerNumber } = {},
+  logMeta = {}
+) => {
+  try {
+    await transporter.sendMail({
+      from: `"CargoPortConnect" <${process.env.SMTP_USER}>`,
+      to: toEmail,
+      subject: `Penalty Issued `,
+      html: `
+        <div style="font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+          <h2 style="color:#b30000;margin:0 0 10px">Account Penalty</h2>
+          ${
+            containerNumber ? `<p><b>Container:</b> ${containerNumber}</p>` : ""
+          }
+          <p><b>Reason:</b> ${reason}</p>
+          ${amount != null ? `<p><b>Amount:</b> ${amount}</p>` : ""}
+           <p style="color:#666;margin-top:10px">Expect an invoice in the next few days.</p>
+          <p style="color:#666;margin-top:10px">Contact support if you believe this was a mistake.</p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    console.error("Error sending penalty email:", err);
   }
 };
