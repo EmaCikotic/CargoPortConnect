@@ -10,28 +10,29 @@ const port = process.env.PORT || 3002;
 
 // Middleware
 app.use(logger("dev"));
-/**app.use(
-  cors({
-    origin: "http://88.200.63.148:3001",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);**/
-
 app.use(
+  cors({
+    origin: "http://88.200.63.148:3002",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  })
+);
+
+//debugging
+/**app.use(
   cors({
     origin: true,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   })
-);
+);**/
 //app.use(cors({ origin: "http://localhost:3001", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "build")));
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "build", "index.html"));
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 // Import Routes

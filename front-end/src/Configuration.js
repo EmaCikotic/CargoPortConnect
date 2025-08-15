@@ -1,4 +1,7 @@
 //export const API_URL = "http://localhost:5001";
 
-export const API_URL = "http://88.200.63.148:3001";
+//export const API_URL = "http://88.200.63.148:5001";
 
+
+//export const API_URL = "http://88.200.63.148:3002";
+export const API_URL = "";
